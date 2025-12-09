@@ -58,7 +58,6 @@
             margin-bottom: 5px; 
         }
         
-        /* Tipografia responsiva para valores */
         .kpi-value { 
             font-size: clamp(1.1rem, 1.8vw, 1.8rem); 
             font-weight: bold; 
@@ -111,29 +110,145 @@
         .text-money { font-family: 'Consolas', monospace; }
         .cursor-pointer { cursor: pointer; }
         
-        /* Badge UF */
-        .badge-uf {
-            min-width: 35px;
+        /* Badges Específicos */
+        .badge-uf { min-width: 35px; }
+        .badge-inst-faf { background-color: #3498db; color: white; }
+        .badge-inst-convenio { background-color: #27ae60; color: white; }
+        .badge-inst-doacao { background-color: #e67e22; color: white; }
+        .badge-inst-default { background-color: #95a5a6; color: white; }
+
+        /* --- ESTILOS DA PÁGINA DE DETALHES --- */
+        .region-title {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 2rem;
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
+
+        .state-detail-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: box-shadow 0.3s;
+            height: 100%;
+            /* O background agora é definido pelas classes regionais */
+        }
+        
+        .state-detail-card:hover {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .state-header {
+            background-color: rgba(255, 255, 255, 0.6); /* Semi-transparente para mesclar com a cor da região */
+            padding: 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .state-flag {
+            width: 50px;
+            height: 35px; 
+            object-fit: contain; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            background-color: #fff; 
+        }
+
+        .state-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .mini-card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 15px;
+        }
+
+        .mini-card {
+            background: #fff; /* Mantém fundo branco para contraste */
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .mini-card-label {
+            font-size: 0.7rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .mini-card-value {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* --- CORES POR REGIÃO (Tons Pastéis) --- */
+        .bg-norte { background-color: #e8f5e9; border-color: #c8e6c9; }       /* Verde Claro */
+        .bg-nordeste { background-color: #ffebee; border-color: #ffcdd2; }    /* Vermelho Claro */
+        .bg-centro-oeste { background-color: #fffde7; border-color: #fff9c4; }/* Amarelo Claro */
+        .bg-sudeste { background-color: #e3f2fd; border-color: #bbdefb; }     /* Azul Claro */
+        .bg-sul { background-color: #f3e5f5; border-color: #e1bee7; }         /* Roxo Claro (Distinto) */
+
+        /* Botão Destaque */
+        .btn-destaque {
+            background-color: var(--accent-color);
+            color: white;
+            font-weight: bold;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            transition: all 0.3s;
+        }
+        .btn-destaque:hover {
+            background-color: #16a085;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Controle de Views */
+        #view-dashboard { display: block; }
+        #view-detalhamento { display: none; }
+
     </style>
 </head>
 <body>
 
-    <!-- CABEÇALHO ATUALIZADO -->
+    <!-- CABEÇALHO -->
     <header class="header-section">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-md-12">
-                    <h1 class="header-title mb-2">Painel de Acompanhamento Fundo a Fundo</h1>
+                <div class="col-md-8">
+                    <h1 class="header-title mb-2">Painel de Acompanhamento</h1>
                     <p class="text-muted mb-0">
-                        Ouvidoria Nacional de Serviços Penais | Monitoramento de Recursos
+                        Ouvidoria Nacional de Serviços Penais | Monitoramento de Recursos (FAF, Convênios e Doações)
                     </p>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <button class="btn btn-destaque" onclick="toggleView('detalhamento')">
+                        <i class="fas fa-th-large me-2"></i> Detalhamento por Estado
+                    </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="container">
+    <!-- VIEW 1: DASHBOARD GERAL -->
+    <div id="view-dashboard" class="container fade-in">
         
         <!-- KPI SECTION (GLOBAL) -->
         <div class="row mb-4">
@@ -141,14 +256,14 @@
                 <div class="card kpi-card">
                     <div class="kpi-title"><i class="fas fa-file-invoice-dollar me-2"></i>Total Repassado</div>
                     <div class="kpi-value text-money" id="kpi-total-contratado">R$ 0,00</div>
-                    <div class="kpi-desc">Global</div>
+                    <div class="kpi-desc">Global (Todos os Instrumentos)</div>
                 </div>
             </div>
             <div class="col-xl-3 col-md-6 mb-3">
                 <div class="card kpi-card">
                     <div class="kpi-title"><i class="fas fa-check-circle me-2"></i>Total Executado</div>
                     <div class="kpi-value text-money text-success" id="kpi-total-executado">R$ 0,00</div>
-                    <div class="kpi-desc">Global</div>
+                    <div class="kpi-desc">Global (Todos os Instrumentos)</div>
                 </div>
             </div>
             <div class="col-xl-3 col-md-6 mb-3">
@@ -188,19 +303,29 @@
                         <i class="fas fa-filter text-secondary me-2"></i>
                         <strong>Filtros:</strong>
                     </div>
+                    
                     <div style="min-width: 200px;">
+                        <select id="filtroInstrumento" class="form-select">
+                            <option value="">Todos Instrumentos</option>
+                        </select>
+                    </div>
+
+                    <div style="min-width: 150px;">
                         <select id="filtroUF" class="form-select">
                             <option value="">Todas as UFs</option>
                         </select>
                     </div>
+                    
                     <div class="flex-grow-1">
                         <input type="text" id="filtroObjeto" class="form-control" placeholder="Buscar por descrição do objeto...">
                     </div>
+                    
                     <button id="btnLimparFiltros" class="btn btn-outline-secondary">
                         <i class="fas fa-undo me-1"></i> Limpar
                     </button>
+                    
                     <span id="filtroAtivoBadge" class="active-filter-badge">
-                        UF: <span id="textoFiltroAtivo"></span> <i class="fas fa-times ms-1 cursor-pointer"></i>
+                        <span id="textoFiltroAtivo"></span> <i class="fas fa-times ms-1 cursor-pointer"></i>
                     </span>
                 </div>
             </div>
@@ -211,7 +336,7 @@
             <div class="col-12 mb-2">
                 <span class="badge bg-secondary text-uppercase"><i class="fas fa-calculator me-1"></i> Resumo da Seleção Atual</span>
             </div>
-            <!-- Dinâmico 1: Repassado -->
+            <!-- Dinâmicos -->
             <div class="col-xl-3 col-md-6 mb-2">
                 <div class="card kpi-card dynamic-card py-2">
                     <div class="d-flex justify-content-between align-items-center">
@@ -223,7 +348,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Dinâmico 2: Executado -->
             <div class="col-xl-3 col-md-6 mb-2">
                 <div class="card kpi-card dynamic-card py-2">
                     <div class="d-flex justify-content-between align-items-center">
@@ -235,7 +359,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Dinâmico 3: Percentual -->
             <div class="col-xl-3 col-md-6 mb-2">
                 <div class="card kpi-card dynamic-card py-2">
                     <div class="d-flex justify-content-between align-items-center">
@@ -247,7 +370,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Dinâmico 4: Quantidade -->
             <div class="col-xl-3 col-md-6 mb-2">
                 <div class="card kpi-card dynamic-card py-2">
                     <div class="d-flex justify-content-between align-items-center">
@@ -268,6 +390,7 @@
                     <table id="tabelaItens" class="table table-striped table-hover w-100">
                         <thead>
                             <tr>
+                                <th class="text-center">Inst.</th>
                                 <th>UF</th>
                                 <th>Objeto</th>
                                 <th class="text-center">Qtd.</th>
@@ -284,12 +407,29 @@
                 </div>
             </div>
         </div>
+    </div> <!-- FIM VIEW DASHBOARD -->
+
+    <!-- VIEW 2: DETALHAMENTO POR ESTADOS (Nova) -->
+    <div id="view-detalhamento" class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <button class="btn btn-outline-secondary mb-3" onclick="toggleView('dashboard')">
+                    <i class="fas fa-arrow-left me-2"></i> Voltar ao Painel Geral
+                </button>
+                <h2 class="text-primary border-bottom pb-2">Detalhamento dos Recursos por Estado</h2>
+            </div>
+        </div>
         
-        <!-- RODAPÉ ATUALIZADO -->
+        <!-- O conteúdo dos estados será injetado aqui via JS -->
+        <div id="container-estados"></div>
+        
+    </div> <!-- FIM VIEW DETALHAMENTO -->
+
+    <!-- RODAPÉ -->
+    <div class="container">
         <footer class="text-center text-muted py-3 small border-top mt-4">
             Painel de Dados - Atualizado em dezembro de 2025
         </footer>
-
     </div>
 
     <!-- SCRIPTS -->
@@ -301,178 +441,447 @@
 
     <script>
         // ========================================================================
-        // 1. BASE DE DADOS INTEGRADA (JSON COMPLETO)
+        // 1. CONFIGURAÇÕES E DADOS
         // ========================================================================
+        
+        // Mapeamento de Regiões e Nomes de Estados
+        const regioes = {
+            "NORTE": ["AC", "AP", "AM", "PA", "RO", "RR", "TO"],
+            "NORDESTE": ["AL", "BA", "CE", "MA", "PB", "PE", "PI", "RN", "SE"],
+            "CENTRO-OESTE": ["DF", "GO", "MT", "MS"],
+            "SUDESTE": ["ES", "MG", "RJ", "SP"],
+            "SUL": ["PR", "RS", "SC"]
+        };
+
+        const nomesEstados = {
+            "AC": "Acre", "AL": "Alagoas", "AP": "Amapá", "AM": "Amazonas", "BA": "Bahia", "CE": "Ceará",
+            "DF": "Distrito Federal", "ES": "Espírito Santo", "GO": "Goiás", "MA": "Maranhão", "MT": "Mato Grosso",
+            "MS": "Mato Grosso do Sul", "MG": "Minas Gerais", "PA": "Pará", "PB": "Paraíba", "PR": "Paraná",
+            "PE": "Pernambuco", "PI": "Piauí", "RJ": "Rio de Janeiro", "RN": "Rio Grande do Norte", "RS": "Rio Grande do Sul",
+            "RO": "Rondônia", "RR": "Roraima", "SC": "Santa Catarina", "SP": "São Paulo", "SE": "Sergipe", "TO": "Tocantins"
+        };
+
+        // Mapeamento de Bandeiras (Wikimedia Commons - Links Estáveis)
+        const imagensBandeiras = {
+            "AC": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Bandeira_do_Acre.svg",
+            "AL": "https://upload.wikimedia.org/wikipedia/commons/8/88/Bandeira_de_Alagoas.svg",
+            "AP": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Bandeira_do_Amap%C3%A1.svg",
+            "AM": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Bandeira_do_Amazonas.svg",
+            "BA": "https://upload.wikimedia.org/wikipedia/commons/2/28/Bandeira_da_Bahia.svg",
+            "CE": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Bandeira_do_Cear%C3%A1.svg",
+            "DF": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Bandeira_do_Distrito_Federal_%28Brasil%29.svg",
+            "ES": "https://upload.wikimedia.org/wikipedia/commons/4/43/Bandeira_do_Esp%C3%ADrito_Santo.svg",
+            "GO": "https://upload.wikimedia.org/wikipedia/commons/b/be/Flag_of_Goi%C3%A1s.svg",
+            "MA": "https://upload.wikimedia.org/wikipedia/commons/4/45/Bandeira_do_Maranh%C3%A3o.svg",
+            "MT": "https://upload.wikimedia.org/wikipedia/commons/0/0b/Bandeira_de_Mato_Grosso.svg",
+            "MS": "https://upload.wikimedia.org/wikipedia/commons/6/64/Bandeira_de_Mato_Grosso_do_Sul.svg",
+            "MG": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Bandeira_de_Minas_Gerais.svg",
+            "PA": "https://upload.wikimedia.org/wikipedia/commons/0/02/Bandeira_do_Par%C3%A1.svg",
+            "PB": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Bandeira_da_Para%C3%ADba.svg",
+            "PR": "https://upload.wikimedia.org/wikipedia/commons/9/93/Bandeira_do_Paran%C3%A1.svg",
+            "PE": "https://upload.wikimedia.org/wikipedia/commons/5/59/Bandeira_de_Pernambuco.svg",
+            "PI": "https://upload.wikimedia.org/wikipedia/commons/3/33/Bandeira_do_Piau%C3%AD.svg",
+            "RJ": "https://upload.wikimedia.org/wikipedia/commons/7/73/Bandeira_do_estado_do_Rio_de_Janeiro.svg",
+            "RN": "https://upload.wikimedia.org/wikipedia/commons/3/30/Bandeira_do_Rio_Grande_do_Norte.svg",
+            "RS": "https://upload.wikimedia.org/wikipedia/commons/6/63/Bandeira_do_Rio_Grande_do_Sul.svg",
+            "RO": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Bandeira_de_Rond%C3%B4nia.svg",
+            "RR": "https://upload.wikimedia.org/wikipedia/commons/9/98/Bandeira_de_Roraima.svg",
+            "SC": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Bandeira_de_Santa_Catarina.svg",
+            "SP": "https://upload.wikimedia.org/wikipedia/commons/2/2b/Bandeira_do_estado_de_S%C3%A3o_Paulo.svg",
+            "SE": "https://upload.wikimedia.org/wikipedia/commons/b/be/Bandeira_de_Sergipe.svg",
+            "TO": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Bandeira_do_Tocantins.svg"
+        };
+
+        // Dados Completos Atualizados
         const dadosFaf = [
-            { "uf": "AC", "objeto": "VEÍCULO DE PASSEIO TIPO SEDAN", "quantidade": 1, "valorUnitario": 125704.00, "valorTotal": 125704.00, "valorExecutado": 125704.00 },
-            { "uf": "AC", "objeto": "Contratação de equipe técnica para OUVIDORIA (psicólogo, jurídico e estagiários) (24 meses)", "quantidade": 1, "valorUnitario": 308425.53, "valorTotal": 308425.53, "valorExecutado": 0.00 },
-            { "uf": "AP", "objeto": "Computador PC", "quantidade": 3, "valorUnitario": 16754.40, "valorTotal": 50263.20, "valorExecutado": 50263.20 },
-            { "uf": "AP", "objeto": "Notebook", "quantidade": 2, "valorUnitario": 12744.80, "valorTotal": 25489.60, "valorExecutado": 25489.60 },
-            { "uf": "AP", "objeto": "Mesas De Escritório Com Gavetas", "quantidade": 3, "valorUnitario": 2370.00, "valorTotal": 7110.00, "valorExecutado": 0.00 },
-            { "uf": "AP", "objeto": "Mesa Redonda Para Reunião", "quantidade": 1, "valorUnitario": 690.00, "valorTotal": 690.00, "valorExecutado": 0.00 },
-            { "uf": "AP", "objeto": "Mesa Auxiliar Para Impressora", "quantidade": 3, "valorUnitario": 894.00, "valorTotal": 2682.00, "valorExecutado": 0.00 },
-            { "uf": "AP", "objeto": "Cadeira Tipo Palito", "quantidade": 6, "valorUnitario": 1794.00, "valorTotal": 10764.00, "valorExecutado": 0.00 },
-            { "uf": "AP", "objeto": "Longarina Com 4 Cadeiras", "quantidade": 2, "valorUnitario": 1520.00, "valorTotal": 3040.00, "valorExecutado": 0.00 },
-            { "uf": "AP", "objeto": "Cadeira Escritório", "quantidade": 3, "valorUnitario": 1617.00, "valorTotal": 4851.00, "valorExecutado": 0.00 },
-            { "uf": "AP", "objeto": "Armário Pequeno", "quantidade": 2, "valorUnitario": 1479.80, "valorTotal": 2959.60, "valorExecutado": 0.00 },
-            { "uf": "AP", "objeto": "Armários Grande", "quantidade": 1, "valorUnitario": 810.00, "valorTotal": 810.00, "valorExecutado": 0.00 },
-            { "uf": "AP", "objeto": "Roteador", "quantidade": 1, "valorUnitario": 728.00, "valorTotal": 728.00, "valorExecutado": 0.00 },
-            { "uf": "AP", "objeto": "Bebedouro Torre Para Garrafão", "quantidade": 2, "valorUnitario": 1598.00, "valorTotal": 3196.00, "valorExecutado": 0.00 },
-            { "uf": "AP", "objeto": "Central De Ar 18.000 Btus", "quantidade": 1, "valorUnitario": 3579.90, "valorTotal": 3579.90, "valorExecutado": 0.00 },
-            { "uf": "AP", "objeto": "Arquivo", "quantidade": 1, "valorUnitario": 1206.00, "valorTotal": 1206.00, "valorExecutado": 0.00 },
-            { "uf": "AP", "objeto": "Caixa De Som Microfone", "quantidade": 1, "valorUnitario": 2873.30, "valorTotal": 2873.30, "valorExecutado": 0.00 },
-            { "uf": "AP", "objeto": "01 Televisor 42”", "quantidade": 4, "valorUnitario": 6756.00, "valorTotal": 27024.00, "valorExecutado": 0.00 },
-            { "uf": "AP", "objeto": "Tela De Projeção", "quantidade": 1, "valorUnitario": 830.00, "valorTotal": 830.00, "valorExecutado": 0.00 },
-            { "uf": "AP", "objeto": "Projeto/Datashow", "quantidade": 1, "valorUnitario": 2699.00, "valorTotal": 2699.00, "valorExecutado": 0.00 },
-            { "uf": "AP", "objeto": "Nobreak", "quantidade": 3, "valorUnitario": 2460.00, "valorTotal": 7380.00, "valorExecutado": 0.00 },
-            { "uf": "AL", "objeto": "Nobreaks;", "quantidade": 2, "valorUnitario": 1036.00, "valorTotal": 2072.00, "valorExecutado": 0.00 },
-            { "uf": "AL", "objeto": "Conjuntos de computadores de mesa (desktop);", "quantidade": 3, "valorUnitario": 4500.00, "valorTotal": 13500.00, "valorExecutado": 0.00 },
-            { "uf": "AL", "objeto": "Scanners de mesa;", "quantidade": 2, "valorUnitario": 1700.00, "valorTotal": 3400.00, "valorExecutado": 0.00 },
-            { "uf": "AL", "objeto": "câmeras WEB;", "quantidade": 2, "valorUnitario": 650.00, "valorTotal": 1300.00, "valorExecutado": 0.00 },
-            { "uf": "AL", "objeto": "Cadeiras estofadas em tecido (ou similar), com encosto e sem braço;", "quantidade": 6, "valorUnitario": 600.00, "valorTotal": 3600.00, "valorExecutado": 0.00 },
-            { "uf": "AL", "objeto": "Armários baixo em MDF, com duas portas com prateleiras internas - com chave;", "quantidade": 2, "valorUnitario": 900.00, "valorTotal": 1800.00, "valorExecutado": 0.00 },
-            { "uf": "AL", "objeto": "Gaveteiros arquivo quatro gavetas para pasta suspensa;", "quantidade": 2, "valorUnitario": 759.67, "valorTotal": 1519.34, "valorExecutado": 0.00 },
-            { "uf": "AL", "objeto": "Câmeras fotográficas digitais;", "quantidade": 2, "valorUnitario": 3589.66, "valorTotal": 7179.32, "valorExecutado": 0.00 },
-            { "uf": "AL", "objeto": "Aparelhos telefônicos celular (smartphone);", "quantidade": 2, "valorUnitario": 4071.67, "valorTotal": 8143.34, "valorExecutado": 0.00 },
-            { "uf": "AL", "objeto": "Ar-condicionado de 12000 BTUs;", "quantidade": 1, "valorUnitario": 1780.97, "valorTotal": 1780.97, "valorExecutado": 0.00 },
-            { "uf": "AL", "objeto": "Nobreaks 1200VA;", "quantidade": 2, "valorUnitario": 1036.00, "valorTotal": 2072.00, "valorExecutado": 0.00 },
-            { "uf": "AL", "objeto": "Roteador wireless;", "quantidade": 1, "valorUnitario": 520.00, "valorTotal": 520.00, "valorExecutado": 0.00 },
-            { "uf": "AL", "objeto": "Aparelhos telefônicos fixos com identificador de chamadas;", "quantidade": 2, "valorUnitario": 380.00, "valorTotal": 760.00, "valorExecutado": 0.00 },
-            { "uf": "AL", "objeto": "Bebedouros para garrafão de água 20L;", "quantidade": 2, "valorUnitario": 734.33, "valorTotal": 1468.66, "valorExecutado": 0.00 },
-            { "uf": "AL", "objeto": "Repetidor wireless de sinal de internet;", "quantidade": 1, "valorUnitario": 350.00, "valorTotal": 350.00, "valorExecutado": 0.00 },
-            { "uf": "AL", "objeto": "Automóvel 1.0 com ar-condicionado", "quantidade": 1, "valorUnitario": 77480.08, "valorTotal": 77480.08, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Televisão LED smart tv 32 polegadas;", "quantidade": 1, "valorUnitario": 1600.00, "valorTotal": 1600.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Microondas 20 litros;", "quantidade": 1, "valorUnitario": 600.00, "valorTotal": 600.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Gélagua de coluna para garrafão de 20 litros;", "quantidade": 1, "valorUnitario": 600.00, "valorTotal": 600.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Frigobar compacto 47 litros;", "quantidade": 1, "valorUnitario": 1300.00, "valorTotal": 1300.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Telefone celular smartphone;", "quantidade": 2, "valorUnitario": 1600.00, "valorTotal": 3200.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Telefone sem fio;", "quantidade": 1, "valorUnitario": 189.22, "valorTotal": 189.22, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Cortinas persianas;", "quantidade": 1, "valorUnitario": 1600.00, "valorTotal": 1600.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Aparelho de ar condicionado 22.000 BTUS com instalação;", "quantidade": 2, "valorUnitario": 3500.00, "valorTotal": 7000.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Gaveteiro volante MDP;", "quantidade": 3, "valorUnitario": 550.00, "valorTotal": 1650.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Mesa em L;", "quantidade": 3, "valorUnitario": 1700.00, "valorTotal": 5100.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Armários baixos com duas portas 800x500x740 mm MDP;", "quantidade": 2, "valorUnitario": 850.00, "valorTotal": 1700.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Mesa de Reunião redonda com tampo em MDP 04 lugares;", "quantidade": 1, "valorUnitario": 1250.00, "valorTotal": 1250.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Escaninho baixo 900x500x740 MDP;", "quantidade": 1, "valorUnitario": 810.00, "valorTotal": 810.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Armário alto 2 portas 1600 x 900 x 500 mm.;", "quantidade": 4, "valorUnitario": 1200.00, "valorTotal": 4800.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Sofá estofado 2 lugares;", "quantidade": 1, "valorUnitario": 3000.00, "valorTotal": 3000.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Cadeira presidente giratória;", "quantidade": 3, "valorUnitario": 2100.00, "valorTotal": 6300.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Cadeiras fixas executivas com braço;", "quantidade": 2, "valorUnitario": 1400.00, "valorTotal": 2800.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Apoio ergonômico para os pés em poliestireno. Medidas aprox.: 400 mm x 300 mm;", "quantidade": 3, "valorUnitario": 100.00, "valorTotal": 300.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Pedestal para banner em alumínio, altura máxima 300 cm;", "quantidade": 1, "valorUnitario": 200.00, "valorTotal": 200.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Computador - CPU de 4 núcleos;", "quantidade": 3, "valorUnitario": 6500.00, "valorTotal": 19500.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Multifuncional Laser Monocromática;", "quantidade": 2, "valorUnitario": 4834.14, "valorTotal": 9668.28, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Tablet com conectividade mínima 3G;", "quantidade": 2, "valorUnitario": 1700.00, "valorTotal": 3400.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Notebook com requisitos mínimos de processamento. CPU de 4 núcleos ou mais;", "quantidade": 2, "valorUnitario": 5750.00, "valorTotal": 11500.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Projetor Cor Branca Resolução XGA;", "quantidade": 1, "valorUnitario": 4464.00, "valorTotal": 4464.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Nobreak;", "quantidade": 3, "valorUnitario": 1070.00, "valorTotal": 3210.00, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "HD externo 1TB USB 3.0;", "quantidade": 2, "valorUnitario": 279.90, "valorTotal": 559.80, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Pendrive 32gb USB 3.0;", "quantidade": 3, "valorUnitario": 32.90, "valorTotal": 98.70, "valorExecutado": 0.00 },
-            { "uf": "CE", "objeto": "Monitor LED 24.", "quantidade": 3, "valorUnitario": 1200.00, "valorTotal": 3600.00, "valorExecutado": 0.00 },
-            { "uf": "DF", "objeto": "Unidade móvel de ouvidoria, por meio de veículo automotor aparelhado com infraestrutura", "quantidade": 1, "valorUnitario": 350000.00, "valorTotal": 350000.00, "valorExecutado": 0.00 },
-            { "uf": "GO", "objeto": "Microcomputadores do tipo Desktop;", "quantidade": 3, "valorUnitario": 6544.89, "valorTotal": 19634.67, "valorExecutado": 0.00 },
-            { "uf": "GO", "objeto": "Monitores", "quantidade": 3, "valorUnitario": 1301.94, "valorTotal": 3905.82, "valorExecutado": 0.00 },
-            { "uf": "MT", "objeto": "Apoio ergonômico para pés;", "quantidade": 2, "valorUnitario": 66.32, "valorTotal": 132.64, "valorExecutado": 132.64 },
-            { "uf": "MT", "objeto": "Fone de Ouvido Supra auricular;", "quantidade": 2, "valorUnitario": 200.00, "valorTotal": 400.00, "valorExecutado": 400.00 },
-            { "uf": "MT", "objeto": "Office.", "quantidade": 3, "valorUnitario": 2094.33, "valorTotal": 6282.99, "valorExecutado": 0.00 },
-            { "uf": "PB", "objeto": "Ar condicionado split - 12.000 BTUs 220V;", "quantidade": 1, "valorUnitario": 2149.00, "valorTotal": 2149.00, "valorExecutado": 0.00 },
-            { "uf": "PB", "objeto": "Notebook - processador Intel;", "quantidade": 4, "valorUnitario": 6349.00, "valorTotal": 25396.00, "valorExecutado": 0.00 },
-            { "uf": "PB", "objeto": "Refrigerador degelo prático 240l;", "quantidade": 1, "valorUnitario": 1699.00, "valorTotal": 1699.00, "valorExecutado": 0.00 },
-            { "uf": "PB", "objeto": "Frigobar, 45l, branco;", "quantidade": 1, "valorUnitario": 732.22, "valorTotal": 732.22, "valorExecutado": 0.00 },
-            { "uf": "PB", "objeto": "TV de 32\"", "quantidade": 1, "valorUnitario": 1599.00, "valorTotal": 1599.00, "valorExecutado": 0.00 },
-            { "uf": "PB", "objeto": "HD Externo;", "quantidade": 1, "valorUnitario": 450.00, "valorTotal": 450.00, "valorExecutado": 0.00 },
-            { "uf": "PB", "objeto": "TV de 50\";", "quantidade": 2, "valorUnitario": 2879.00, "valorTotal": 5758.00, "valorExecutado": 0.00 },
-            { "uf": "PB", "objeto": "Microcomputador, inclusive monitor, processador 16M;", "quantidade": 2, "valorUnitario": 6409.99, "valorTotal": 12819.98, "valorExecutado": 0.00 },
-            { "uf": "PB", "objeto": "Multifuncional -impressora;", "quantidade": 1, "valorUnitario": 1215.05, "valorTotal": 1215.05, "valorExecutado": 0.00 },
-            { "uf": "PB", "objeto": "Triturador de documentos;", "quantidade": 1, "valorUnitario": 2699.00, "valorTotal": 2699.00, "valorExecutado": 0.00 },
-            { "uf": "PB", "objeto": "Gelágua - bebedouro de coluna;", "quantidade": 1, "valorUnitario": 639.00, "valorTotal": 639.00, "valorExecutado": 0.00 },
-            { "uf": "PB", "objeto": "Fragmentadora de papel.", "quantidade": 1, "valorUnitario": 599.90, "valorTotal": 599.90, "valorExecutado": 0.00 },
-            { "uf": "PI", "objeto": "Computadores;", "quantidade": 3, "valorUnitario": 6500.00, "valorTotal": 19500.00, "valorExecutado": 0.00 },
-            { "uf": "PI", "objeto": "Nobreaks 1000 VAs;", "quantidade": 3, "valorUnitario": 900.00, "valorTotal": 2700.00, "valorExecutado": 0.00 },
-            { "uf": "PI", "objeto": "Impressora Multifuncional;", "quantidade": 1, "valorUnitario": 1300.00, "valorTotal": 1300.00, "valorExecutado": 0.00 },
-            { "uf": "PI", "objeto": "Ar condicionado Split 12.000 btus.", "quantidade": 1, "valorUnitario": 1800.00, "valorTotal": 1800.00, "valorExecutado": 0.00 },
-            { "uf": "PR", "objeto": "Câmera fotográfica;", "quantidade": 1, "valorUnitario": 6202.00, "valorTotal": 6202.00, "valorExecutado": 0.00 },
-            { "uf": "PR", "objeto": "Cartão de memória;", "quantidade": 2, "valorUnitario": 150.00, "valorTotal": 300.00, "valorExecutado": 0.00 },
-            { "uf": "PR", "objeto": "Mochila;", "quantidade": 1, "valorUnitario": 160.00, "valorTotal": 160.00, "valorExecutado": 0.00 },
-            { "uf": "PR", "objeto": "Tripé para câmera;", "quantidade": 1, "valorUnitario": 400.00, "valorTotal": 400.00, "valorExecutado": 0.00 },
-            { "uf": "PR", "objeto": "Impressora multifuncional;", "quantidade": 1, "valorUnitario": 4390.00, "valorTotal": 4390.00, "valorExecutado": 0.00 },
-            { "uf": "PR", "objeto": "Notebook;", "quantidade": 1, "valorUnitario": 5722.00, "valorTotal": 5722.00, "valorExecutado": 0.00 },
-            { "uf": "PR", "objeto": "HD externo;", "quantidade": 1, "valorUnitario": 357.00, "valorTotal": 357.00, "valorExecutado": 0.00 },
-            { "uf": "PR", "objeto": "Webcam;", "quantidade": 2, "valorUnitario": 449.00, "valorTotal": 898.00, "valorExecutado": 0.00 },
-            { "uf": "PR", "objeto": "Microfone de mesa.", "quantidade": 2, "valorUnitario": 86.00, "valorTotal": 172.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Notebook;", "quantidade": 2, "valorUnitario": 5550.00, "valorTotal": 11100.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Computador de Mesa (Desktop);", "quantidade": 2, "valorUnitario": 5039.00, "valorTotal": 10078.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Monitor;", "quantidade": 2, "valorUnitario": 1499.00, "valorTotal": 2998.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Segundo Monitor;", "quantidade": 2, "valorUnitario": 1799.98, "valorTotal": 3599.96, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Nobreak;", "quantidade": 2, "valorUnitario": 2754.00, "valorTotal": 5508.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Pen Drive 32Gb;", "quantidade": 2, "valorUnitario": 49.90, "valorTotal": 99.80, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Headset;", "quantidade": 2, "valorUnitario": 235.00, "valorTotal": 470.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Gravador de voz digital - para atendimentos presenciais;", "quantidade": 2, "valorUnitario": 450.00, "valorTotal": 900.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Scanner de mesa;", "quantidade": 1, "valorUnitario": 1899.90, "valorTotal": 1899.90, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Web Cam;", "quantidade": 2, "valorUnitario": 539.90, "valorTotal": 1079.80, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Telefone com identificador de chamadas;", "quantidade": 1, "valorUnitario": 589.00, "valorTotal": 589.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Impressora Multifuncional;", "quantidade": 1, "valorUnitario": 3299.00, "valorTotal": 3299.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Teclado para computador;", "quantidade": 2, "valorUnitario": 180.00, "valorTotal": 360.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Mouse;", "quantidade": 2, "valorUnitario": 89.00, "valorTotal": 178.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Cadeiras para escritórios (presidente);", "quantidade": 2, "valorUnitario": 945.00, "valorTotal": 1890.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Cadeiras Executiva (com braço);", "quantidade": 4, "valorUnitario": 620.00, "valorTotal": 2480.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Armário de escritório 2 portas e com prateleiras - com chave;", "quantidade": 1, "valorUnitario": 730.00, "valorTotal": 730.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Gaveteiro 3 gavetas, com rodízio e chave;", "quantidade": 2, "valorUnitario": 520.00, "valorTotal": 1040.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Armário Baixo em MDF, com duas portas com prateleiras internas - com chave;", "quantidade": 2, "valorUnitario": 580.00, "valorTotal": 1160.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Câmera Fotográfica Digital de alta resolução;", "quantidade": 1, "valorUnitario": 5200.00, "valorTotal": 5200.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Mesa em L em em MDF 1,40 x 1,40 com 02 gavetas;", "quantidade": 2, "valorUnitario": 1100.00, "valorTotal": 2200.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Estofado de 02 lugares, de até 2m de comprimento;", "quantidade": 1, "valorUnitario": 2199.00, "valorTotal": 2199.00, "valorExecutado": 0.00 },
-            { "uf": "RO", "objeto": "Aquisição de Bebedouro para garrafão de 20 litros.", "quantidade": 1, "valorUnitario": 1151.00, "valorTotal": 1151.00, "valorExecutado": 0.00 },
-            { "uf": "RR", "objeto": "Notebook", "quantidade": 3, "valorUnitario": 6192.18, "valorTotal": 18576.54, "valorExecutado": 0.00 },
-            { "uf": "SC", "objeto": "Tablete; ", "quantidade": 2, "valorUnitario": 2456.33, "valorTotal": 4912.66, "valorExecutado": 0.00 },
-            { "uf": "SC", "objeto": "Web Câmeras; ", "quantidade": 8, "valorUnitario": 339.00, "valorTotal": 2712.00, "valorExecutado": 0.00 },
-            { "uf": "SC", "objeto": "HD’s externos; ", "quantidade": 1, "valorUnitario": 315.00, "valorTotal": 315.00, "valorExecutado": 0.00 },
-            { "uf": "SC", "objeto": "Notebook;", "quantidade": 3, "valorUnitario": 1530.00, "valorTotal": 4590.00, "valorExecutado": 0.00 },
-            { "uf": "SC", "objeto": "Programa Editor de PDF, licença mensal", "quantidade": 12, "valorUnitario": 55.00, "valorTotal": 660.00, "valorExecutado": 0.00 },
-            { "uf": "SC", "objeto": "Caixa de som para PC;", "quantidade": 8, "valorUnitario": 78.00, "valorTotal": 624.00, "valorExecutado": 0.00 },
-            { "uf": "SC", "objeto": "Fone/Microfone para PC;", "quantidade": 8, "valorUnitario": 39.00, "valorTotal": 312.00, "valorExecutado": 0.00 },
-            { "uf": "SC", "objeto": "Telefone com identificador.", "quantidade": 3, "valorUnitario": 938.00, "valorTotal": 2814.00, "valorExecutado": 0.00 },
-            { "uf": "SP", "objeto": "Sofá recepção 03 lugares;", "quantidade": 1, "valorUnitario": 1298.00, "valorTotal": 1298.00, "valorExecutado": 0.00 },
-            { "uf": "SP", "objeto": "Cadeira de escritório ergonômica com base giratória;", "quantidade": 9, "valorUnitario": 1099.91, "valorTotal": 9899.19, "valorExecutado": 0.00 },
-            { "uf": "SP", "objeto": "Mesa para escritório em L;", "quantidade": 2, "valorUnitario": 1339.36, "valorTotal": 2678.72, "valorExecutado": 0.00 },
-            { "uf": "SP", "objeto": "Geladeira frost free duplex 389l;", "quantidade": 1, "valorUnitario": 3289.00, "valorTotal": 3289.00, "valorExecutado": 0.00 },
-            { "uf": "SP", "objeto": "Persiana vertical PVC (m²);", "quantidade": 1, "valorUnitario": 135.50, "valorTotal": 135.50, "valorExecutado": 0.00 },
-            { "uf": "SP", "objeto": "Teclado USB com fio;", "quantidade": 13, "valorUnitario": 87.67, "valorTotal": 1139.71, "valorExecutado": 0.00 },
-            { "uf": "SP", "objeto": "Mouse óptico USB preto;", "quantidade": 13, "valorUnitario": 23.36, "valorTotal": 303.68, "valorExecutado": 0.00 },
-            { "uf": "SP", "objeto": "Etiqueta inkjet+laser A5 9,0x32,0 multiusos.", "quantidade": 10, "valorUnitario": 8.20, "valorTotal": 82.00, "valorExecutado": 0.00 },
-            { "uf": "TO", "objeto": "Mesa Reta;", "quantidade": 2, "valorUnitario": 1100.00, "valorTotal": 2200.00, "valorExecutado": 0.00 },
-            { "uf": "TO", "objeto": "Cadeira presidente operativa;", "quantidade": 2, "valorUnitario": 2600.00, "valorTotal": 5200.00, "valorExecutado": 1861.34 },
-            { "uf": "TO", "objeto": "Cadeira executiva fixa sem braços;", "quantidade": 4, "valorUnitario": 820.00, "valorTotal": 3280.00, "valorExecutado": 1391.40 },
-            { "uf": "TO", "objeto": "Armário baixo com 2 portas;", "quantidade": 1, "valorUnitario": 1423.00, "valorTotal": 1423.00, "valorExecutado": 0.00 },
-            { "uf": "TO", "objeto": "Armário alto com 2 portas, 4 prateleiras;", "quantidade": 1, "valorUnitario": 2443.00, "valorTotal": 2443.00, "valorExecutado": 0.00 },
-            { "uf": "TO", "objeto": "Ar-condicionado 18.000 btus;", "quantidade": 1, "valorUnitario": 3200.00, "valorTotal": 3200.00, "valorExecutado": 3214.83 },
-            { "uf": "TO", "objeto": "CPU Desktop Dll opt 3000;", "quantidade": 1, "valorUnitario": 4838.00, "valorTotal": 4838.00, "valorExecutado": 0.00 },
-            { "uf": "TO", "objeto": "Monitor Dell 21,5 pol full;", "quantidade": 1, "valorUnitario": 1380.00, "valorTotal": 1380.00, "valorExecutado": 0.00 },
-            { "uf": "TO", "objeto": "Monitor Led com tela de 19,5\" mínimo;", "quantidade": 1, "valorUnitario": 951.90, "valorTotal": 951.90, "valorExecutado": 0.00 },
-            { "uf": "TO", "objeto": "Nobreak;", "quantidade": 2, "valorUnitario": 1100.00, "valorTotal": 2200.00, "valorExecutado": 0.00 },
-            { "uf": "TO", "objeto": "Notebook;", "quantidade": 1, "valorUnitario": 8000.00, "valorTotal": 8000.00, "valorExecutado": 0.00 }
+            { "uf": "AC", "objeto": "VEÍCULO DE PASSEIO TIPO SEDAN", "quantidade": 1, "valorUnitario": 125704.0, "valorTotal": 125704.0, "valorExecutado": 125704.0, "instrumento": "FAF 2021" },
+            { "uf": "AC", "objeto": "Contratação de equipe técnica para OUVIDORIA (psicólogo, jurídico e estagiários) (24 meses)", "quantidade": 1, "valorUnitario": 308425.53, "valorTotal": 308425.53, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Computador PC", "quantidade": 3, "valorUnitario": 16754.4, "valorTotal": 50263.2, "valorExecutado": 50263.2, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Notebook", "quantidade": 2, "valorUnitario": 12744.8, "valorTotal": 25489.6, "valorExecutado": 25489.6, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Mesas De Escritório Com Gavetas", "quantidade": 3, "valorUnitario": 2370.0, "valorTotal": 7110.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Mesa Redonda Para Reunião", "quantidade": 1, "valorUnitario": 690.0, "valorTotal": 690.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Mesa Auxiliar Para Impressora", "quantidade": 3, "valorUnitario": 894.0, "valorTotal": 2682.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Cadeira Tipo Palito", "quantidade": 6, "valorUnitario": 1794.0, "valorTotal": 10764.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Longarina Com 4 Cadeiras", "quantidade": 2, "valorUnitario": 1520.0, "valorTotal": 3040.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Cadeira Escritório", "quantidade": 3, "valorUnitario": 1617.0, "valorTotal": 4851.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Armário Pequeno", "quantidade": 2, "valorUnitario": 1479.8, "valorTotal": 2959.6, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Armários Grande", "quantidade": 1, "valorUnitario": 810.0, "valorTotal": 810.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Roteador", "quantidade": 1, "valorUnitario": 728.0, "valorTotal": 728.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Bebedouro Torre Para Garrafão", "quantidade": 2, "valorUnitario": 1598.0, "valorTotal": 3196.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Central De Ar 18.000 Btus", "quantidade": 1, "valorUnitario": 3579.9, "valorTotal": 3579.9, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Arquivo", "quantidade": 1, "valorUnitario": 1206.0, "valorTotal": 1206.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Caixa De Som Microfone", "quantidade": 1, "valorUnitario": 2873.3, "valorTotal": 2873.3, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "01 Televisor 42”", "quantidade": 4, "valorUnitario": 6756.0, "valorTotal": 27024.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Tela De Projeção", "quantidade": 1, "valorUnitario": 830.0, "valorTotal": 830.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Projeto/Datashow", "quantidade": 1, "valorUnitario": 2699.0, "valorTotal": 2699.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AP", "objeto": "Nobreak", "quantidade": 3, "valorUnitario": 2460.0, "valorTotal": 7380.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AL", "objeto": "Nobreaks;", "quantidade": 2, "valorUnitario": 1036.0, "valorTotal": 2072.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AL", "objeto": "Conjuntos de computadores de mesa (desktop);", "quantidade": 3, "valorUnitario": 4500.0, "valorTotal": 13500.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AL", "objeto": "Scanners de mesa;", "quantidade": 2, "valorUnitario": 1700.0, "valorTotal": 3400.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AL", "objeto": "câmeras WEB;", "quantidade": 2, "valorUnitario": 650.0, "valorTotal": 1300.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AL", "objeto": "Cadeiras estofadas em tecido (ou similar), com encosto e sem braço; ", "quantidade": 6, "valorUnitario": 600.0, "valorTotal": 3600.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AL", "objeto": "Armários baixo em MDF, com duas portas com prateleiras internas - com chave; ", "quantidade": 2, "valorUnitario": 900.0, "valorTotal": 1800.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AL", "objeto": "Gaveteiros arquivo quatro gavetas para pasta suspensa;", "quantidade": 2, "valorUnitario": 759.67, "valorTotal": 1519.34, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AL", "objeto": "Câmeras fotográficas digitais; ", "quantidade": 2, "valorUnitario": 3589.66, "valorTotal": 7179.32, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AL", "objeto": "Aparelhos telefônicos celular (smartphone); ", "quantidade": 2, "valorUnitario": 4071.67, "valorTotal": 8143.34, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AL", "objeto": "Ar-condicionado de 12000 BTUs;", "quantidade": 1, "valorUnitario": 1780.97, "valorTotal": 1780.97, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AL", "objeto": "Nobreaks 1200VA;", "quantidade": 2, "valorUnitario": 1036.0, "valorTotal": 2072.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AL", "objeto": "Roteador wireless; ", "quantidade": 1, "valorUnitario": 520.0, "valorTotal": 520.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AL", "objeto": "Aparelhos telefônicos fixos com identificador de chamadas; ", "quantidade": 2, "valorUnitario": 380.0, "valorTotal": 760.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AL", "objeto": "Bebedouros para garrafão de água 20L;", "quantidade": 2, "valorUnitario": 734.33, "valorTotal": 1468.66, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AL", "objeto": "Repetidor wireless de sinal de internet;", "quantidade": 1, "valorUnitario": 350.0, "valorTotal": 350.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "AL", "objeto": "Automóvel 1.0 com ar-condicionado", "quantidade": 1, "valorUnitario": 77480.08, "valorTotal": 77480.08, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Televisão LED smart tv 32 polegadas;", "quantidade": 1, "valorUnitario": 1600.0, "valorTotal": 1600.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Microondas 20 litros; ", "quantidade": 1, "valorUnitario": 600.0, "valorTotal": 600.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Gélagua de coluna para garrafão de 20 litros; ", "quantidade": 1, "valorUnitario": 600.0, "valorTotal": 600.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Frigobar compacto 47 litros; ", "quantidade": 1, "valorUnitario": 1300.0, "valorTotal": 1300.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Telefone celular smartphone; ", "quantidade": 2, "valorUnitario": 1600.0, "valorTotal": 3200.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Telefone sem fio; ", "quantidade": 1, "valorUnitario": 189.22, "valorTotal": 189.22, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Cortinas persianas; ", "quantidade": 1, "valorUnitario": 1600.0, "valorTotal": 1600.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Aparelho de ar condicionado 22.000 BTUS com instalação; ", "quantidade": 2, "valorUnitario": 3500.0, "valorTotal": 7000.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Gaveteiro volante MDP; ", "quantidade": 3, "valorUnitario": 550.0, "valorTotal": 1650.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Mesa em \"L\"; ", "quantidade": 3, "valorUnitario": 1700.0, "valorTotal": 5100.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Armários baixos com duas portas 800x500x740 mm MDP; ", "quantidade": 2, "valorUnitario": 850.0, "valorTotal": 1700.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Mesa de Reunião redonda com tampo em MDP 04 lugares; ", "quantidade": 1, "valorUnitario": 1250.0, "valorTotal": 1250.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Escaninho baixo 900x500x740 MDP; ", "quantidade": 1, "valorUnitario": 810.0, "valorTotal": 810.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Armário alto 2 portas 1600 x 900 x 500 mm.; ", "quantidade": 4, "valorUnitario": 1200.0, "valorTotal": 4800.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Sofá estofado 2 lugares; ", "quantidade": 1, "valorUnitario": 3000.0, "valorTotal": 3000.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Cadeira presidente giratória; ", "quantidade": 3, "valorUnitario": 2100.0, "valorTotal": 6300.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Cadeiras fixas executivas com braço; ", "quantidade": 2, "valorUnitario": 1400.0, "valorTotal": 2800.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Apoio ergonômico para os pés em poliestireno. Medidas aprox.: 400 mm x 300 mm; ", "quantidade": 3, "valorUnitario": 100.0, "valorTotal": 300.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Pedestal para banner em alumínio, altura máxima 300 cm; ", "quantidade": 1, "valorUnitario": 200.0, "valorTotal": 200.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Computador - CPU de 4 núcleos; ", "quantidade": 3, "valorUnitario": 6500.0, "valorTotal": 19500.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Multifuncional Laser Monocromática; ", "quantidade": 2, "valorUnitario": 4834.14, "valorTotal": 9668.28, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Tablet com conectividade mínima 3G; ", "quantidade": 2, "valorUnitario": 1700.0, "valorTotal": 3400.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Notebook com requisitos mínimos de processamento. CPU de 4 núcleos ou mais; ", "quantidade": 2, "valorUnitario": 5750.0, "valorTotal": 11500.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Projetor Cor Branca Resolução XGA; ", "quantidade": 1, "valorUnitario": 4464.0, "valorTotal": 4464.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Nobreak; ", "quantidade": 3, "valorUnitario": 1070.0, "valorTotal": 3210.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "HD externo 1TB USB 3.0;", "quantidade": 2, "valorUnitario": 279.9, "valorTotal": 559.8, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Pendrive 32gb USB 3.0; ", "quantidade": 3, "valorUnitario": 32.9, "valorTotal": 98.7, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "CE", "objeto": "Monitor LED 24.", "quantidade": 3, "valorUnitario": 1200.0, "valorTotal": 3600.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "DF", "objeto": "Unidade móvel de ouvidoria, por meio de veículo automotor aparelhado com infraestrutura", "quantidade": 1, "valorUnitario": 350000.0, "valorTotal": 350000.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "GO", "objeto": "Microcomputadores do tipo Desktop;", "quantidade": 3, "valorUnitario": 6544.89, "valorTotal": 19634.67, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "GO", "objeto": "Monitores", "quantidade": 3, "valorUnitario": 1301.94, "valorTotal": 3905.82, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "MT", "objeto": "Apoio ergonômico para pés; ", "quantidade": 2, "valorUnitario": 66.32, "valorTotal": 132.64, "valorExecutado": 132.64, "instrumento": "FAF 2021" },
+            { "uf": "MT", "objeto": "Fone de Ouvido Supra auricular;", "quantidade": 2, "valorUnitario": 200.0, "valorTotal": 400.0, "valorExecutado": 400.0, "instrumento": "FAF 2021" },
+            { "uf": "MT", "objeto": "Office.", "quantidade": 3, "valorUnitario": 2094.33, "valorTotal": 6282.99, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PB", "objeto": "Ar condicionado split - 12.000 BTUs 220V;", "quantidade": 1, "valorUnitario": 2149.0, "valorTotal": 2149.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PB", "objeto": "Notebook - processador Intel;", "quantidade": 4, "valorUnitario": 6349.0, "valorTotal": 25396.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PB", "objeto": "Refrigerador degelo prático 240l;", "quantidade": 1, "valorUnitario": 1699.0, "valorTotal": 1699.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PB", "objeto": "Frigobar, 45l, branco;", "quantidade": 1, "valorUnitario": 732.22, "valorTotal": 732.22, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PB", "objeto": "TV de 32\"", "quantidade": 1, "valorUnitario": 1599.0, "valorTotal": 1599.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PB", "objeto": "HD Externo;", "quantidade": 1, "valorUnitario": 450.0, "valorTotal": 450.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PB", "objeto": "TV de 50\";", "quantidade": 2, "valorUnitario": 2879.0, "valorTotal": 5758.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PB", "objeto": "Microcomputador, inclusive monitor, processador 16M;", "quantidade": 2, "valorUnitario": 6409.99, "valorTotal": 12819.98, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PB", "objeto": "Multifuncional -impressora;", "quantidade": 1, "valorUnitario": 1215.05, "valorTotal": 1215.05, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PB", "objeto": "Triturador de documentos;", "quantidade": 1, "valorUnitario": 2699.0, "valorTotal": 2699.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PB", "objeto": "Gelágua - bebedouro de coluna;", "quantidade": 1, "valorUnitario": 639.0, "valorTotal": 639.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PB", "objeto": "Fragmentadora de papel.", "quantidade": 1, "valorUnitario": 599.9, "valorTotal": 599.9, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PI", "objeto": "Computadores; ", "quantidade": 3, "valorUnitario": 6500.0, "valorTotal": 19500.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PI", "objeto": "Nobreaks 1000 VAs;", "quantidade": 3, "valorUnitario": 900.0, "valorTotal": 2700.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PI", "objeto": "Impressora Multifuncional; ", "quantidade": 1, "valorUnitario": 1300.0, "valorTotal": 1300.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PI", "objeto": "Ar condicionado Split 12.000 btus. ", "quantidade": 1, "valorUnitario": 1800.0, "valorTotal": 1800.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PR", "objeto": "Câmera fotográfica;", "quantidade": 1, "valorUnitario": 6202.0, "valorTotal": 6202.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PR", "objeto": "Cartão de memória;", "quantidade": 2, "valorUnitario": 150.0, "valorTotal": 300.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PR", "objeto": "Mochila;", "quantidade": 1, "valorUnitario": 160.0, "valorTotal": 160.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PR", "objeto": "Tripé para câmera;", "quantidade": 1, "valorUnitario": 400.0, "valorTotal": 400.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PR", "objeto": "Impressora multifuncional;", "quantidade": 1, "valorUnitario": 4390.0, "valorTotal": 4390.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PR", "objeto": "Notebook;", "quantidade": 1, "valorUnitario": 5722.0, "valorTotal": 5722.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PR", "objeto": "HD externo;", "quantidade": 1, "valorUnitario": 357.0, "valorTotal": 357.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PR", "objeto": "Webcam;", "quantidade": 2, "valorUnitario": 449.0, "valorTotal": 898.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "PR", "objeto": "Microfone de mesa.", "quantidade": 2, "valorUnitario": 86.0, "valorTotal": 172.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Notebook;", "quantidade": 2, "valorUnitario": 5550.0, "valorTotal": 11100.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Computador de Mesa (Desktop);", "quantidade": 2, "valorUnitario": 5039.0, "valorTotal": 10078.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Monitor;", "quantidade": 2, "valorUnitario": 1499.0, "valorTotal": 2998.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Segundo Monitor;", "quantidade": 2, "valorUnitario": 1799.98, "valorTotal": 3599.96, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Nobreak;", "quantidade": 2, "valorUnitario": 2754.0, "valorTotal": 5508.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Pen Drive 32Gb;", "quantidade": 2, "valorUnitario": 49.9, "valorTotal": 99.8, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Headset;", "quantidade": 2, "valorUnitario": 235.0, "valorTotal": 470.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Gravador de voz digital - para atendimentos presenciais;", "quantidade": 2, "valorUnitario": 450.0, "valorTotal": 900.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Scanner de mesa;", "quantidade": 1, "valorUnitario": 1899.9, "valorTotal": 1899.9, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Web Cam;", "quantidade": 2, "valorUnitario": 539.9, "valorTotal": 1079.8, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Telefone com identificador de chamadas;", "quantidade": 1, "valorUnitario": 589.0, "valorTotal": 589.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Impressora Multifuncional;", "quantidade": 1, "valorUnitario": 3299.0, "valorTotal": 3299.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Teclado para computador;", "quantidade": 2, "valorUnitario": 180.0, "valorTotal": 360.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Mouse;", "quantidade": 2, "valorUnitario": 89.0, "valorTotal": 178.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Cadeiras para escritórios (presidente);", "quantidade": 2, "valorUnitario": 945.0, "valorTotal": 1890.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Cadeiras Executiva (com braço);", "quantidade": 4, "valorUnitario": 620.0, "valorTotal": 2480.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Armário de escritório 2 portas e com prateleiras - com chave;", "quantidade": 1, "valorUnitario": 730.0, "valorTotal": 730.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Gaveteiro 3 gavetas, com rodízio e chave;", "quantidade": 2, "valorUnitario": 520.0, "valorTotal": 1040.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Armário Baixo em MDF, com duas portas com prateleiras internas - com chave;", "quantidade": 2, "valorUnitario": 580.0, "valorTotal": 1160.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Câmera Fotográfica Digital de alta resolução;", "quantidade": 1, "valorUnitario": 5200.0, "valorTotal": 5200.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Mesa em L em em MDF 1,40 x 1,40 com 02 gavetas;", "quantidade": 2, "valorUnitario": 1100.0, "valorTotal": 2200.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Estofado de 02 lugares, de até 2m de comprimento;", "quantidade": 1, "valorUnitario": 2199.0, "valorTotal": 2199.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RO", "objeto": "Aquisição de Bebedouro para garrafão de 20 litros.", "quantidade": 1, "valorUnitario": 1151.0, "valorTotal": 1151.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "RR", "objeto": "Notebook", "quantidade": 3, "valorUnitario": 6192.18, "valorTotal": 18576.54, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "SC", "objeto": "Tablete; ", "quantidade": 2, "valorUnitario": 2456.33, "valorTotal": 4912.66, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "SC", "objeto": "Web Câmeras; ", "quantidade": 8, "valorUnitario": 339.0, "valorTotal": 2712.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "SC", "objeto": "HD’s externos; ", "quantidade": 1, "valorUnitario": 315.0, "valorTotal": 315.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "SC", "objeto": "Notebook;", "quantidade": 3, "valorUnitario": 1530.0, "valorTotal": 4590.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "SC", "objeto": "Programa Editor de PDF, licença mensal", "quantidade": 12, "valorUnitario": 55.0, "valorTotal": 660.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "SC", "objeto": "Caixa de som para PC; ", "quantidade": 8, "valorUnitario": 78.0, "valorTotal": 624.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "SC", "objeto": "Fone/Microfone para PC; ", "quantidade": 8, "valorUnitario": 39.0, "valorTotal": 312.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "SC", "objeto": "Telefone com identificador.", "quantidade": 3, "valorUnitario": 938.0, "valorTotal": 2814.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "SP", "objeto": "Sofá recepção 03 lugares; ", "quantidade": 1, "valorUnitario": 1298.0, "valorTotal": 1298.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "SP", "objeto": "Cadeira de escritório ergonômica com base giratória; ", "quantidade": 9, "valorUnitario": 1099.91, "valorTotal": 9899.19, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "SP", "objeto": "Mesa para escritório em L; ", "quantidade": 2, "valorUnitario": 1339.36, "valorTotal": 2678.72, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "SP", "objeto": "Geladeira frost free duplex 389l; ", "quantidade": 1, "valorUnitario": 3289.0, "valorTotal": 3289.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "SP", "objeto": "Persiana vertical PVC (m²); ", "quantidade": 1, "valorUnitario": 135.5, "valorTotal": 135.5, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "SP", "objeto": "Teclado USB com fio; ", "quantidade": 13, "valorUnitario": 87.67, "valorTotal": 1139.71, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "SP", "objeto": "Mouse óptico USB preto; ", "quantidade": 13, "valorUnitario": 23.36, "valorTotal": 303.68, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "SP", "objeto": "Etiqueta inkjet+laser A5 9,0x32,0 multiusos.", "quantidade": 10, "valorUnitario": 8.2, "valorTotal": 82.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "TO", "objeto": "Mesa Reta; ", "quantidade": 2, "valorUnitario": 1100.0, "valorTotal": 2200.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "TO", "objeto": "Cadeira presidente operativa; ", "quantidade": 2, "valorUnitario": 2600.0, "valorTotal": 5200.0, "valorExecutado": 1861.34, "instrumento": "FAF 2021" },
+            { "uf": "TO", "objeto": "Cadeira executiva fixa sem braços; ", "quantidade": 4, "valorUnitario": 820.0, "valorTotal": 3280.0, "valorExecutado": 1391.4, "instrumento": "FAF 2021" },
+            { "uf": "TO", "objeto": "Armário baixo com 2 portas; ", "quantidade": 1, "valorUnitario": 1423.0, "valorTotal": 1423.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "TO", "objeto": "Armário alto com 2 portas, 4 prateleiras; ", "quantidade": 1, "valorUnitario": 2443.0, "valorTotal": 2443.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "TO", "objeto": "Ar-condicionado 18.000 btus; ", "quantidade": 1, "valorUnitario": 3200.0, "valorTotal": 3200.0, "valorExecutado": 3214.83, "instrumento": "FAF 2021" },
+            { "uf": "TO", "objeto": "CPU Desktop Dll opt 3000; ", "quantidade": 1, "valorUnitario": 4838.0, "valorTotal": 4838.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "TO", "objeto": "Monitor Dell 21,5 pol full; ", "quantidade": 1, "valorUnitario": 1380.0, "valorTotal": 1380.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "TO", "objeto": "Monitor Led com tela de 19,5\" mínimo; ", "quantidade": 1, "valorUnitario": 951.9, "valorTotal": 951.9, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "TO", "objeto": "Nobreak; ", "quantidade": 2, "valorUnitario": 1100.0, "valorTotal": 2200.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "TO", "objeto": "Notebook; ", "quantidade": 1, "valorUnitario": 8000.0, "valorTotal": 8000.0, "valorExecutado": 0, "instrumento": "FAF 2021" },
+            { "uf": "MT", "objeto": "Cartilhas, Capa: 29,7x42,2cm, 4x4 cores,", "quantidade": 5700, "valorUnitario": 7.32, "valorTotal": 41724.0, "valorExecutado": 33573.0, "instrumento": "Convênio" },
+            { "uf": "MT", "objeto": "Serviço de confecção de Banner, 90x120cm", "quantidade": 316, "valorUnitario": 75.0, "valorTotal": 23700.0, "valorExecutado": 7997.96, "instrumento": "Convênio" },
+            { "uf": "MT", "objeto": "Serviço de confecção de Folders, 45x45cm", "quantidade": 5713, "valorUnitario": 4.12, "valorTotal": 23537.56, "valorExecutado": 1428.25, "instrumento": "Convênio" },
+            { "uf": "MT", "objeto": "** TA Contrapartida - Computador Desktop", "quantidade": 4, "valorUnitario": 3462.23, "valorTotal": 13848.92, "valorExecutado": 13848.91, "instrumento": "Convênio" },
+            { "uf": "MT", "objeto": "** TA Contrapartida - Fone ouvido tipo: ", "quantidade": 5, "valorUnitario": 8.58, "valorTotal": 42.9, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MT", "objeto": "Celulares smartphone, 128gb-5g - octa-co", "quantidade": 1, "valorUnitario": 2057.93, "valorTotal": 2057.93, "valorExecutado": 1743.0, "instrumento": "Convênio" },
+            { "uf": "MT", "objeto": "Fone ouvido tipo: fechado, dinâmico , im", "quantidade": 5, "valorUnitario": 170.42, "valorTotal": 852.1, "valorExecutado": 895.0, "instrumento": "Convênio" },
+            { "uf": "MT", "objeto": "Webcan Full HD para chamadas e gravações", "quantidade": 4, "valorUnitario": 545.26, "valorTotal": 2181.04, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MT", "objeto": "** Contrapartida - Computador Desktop Bá", "quantidade": 4, "valorUnitario": 1996.92, "valorTotal": 7987.68, "valorExecutado": 7987.69, "instrumento": "Convênio" },
+            { "uf": "MT", "objeto": "Nobreak, alimentador automático de tensã", "quantidade": 5, "valorUnitario": 706.71, "valorTotal": 3533.55, "valorExecutado": 3163.4, "instrumento": "Convênio" },
+            { "uf": "GO", "objeto": "Automóvel de transporte de passageiros -", "quantidade": 1, "valorUnitario": 106486.0, "valorTotal": 106486.0, "valorExecutado": 106486.0, "instrumento": "Convênio" },
+            { "uf": "PR", "objeto": "Curso de Pós Graduação em Compliance e L", "quantidade": 2, "valorUnitario": 4224.67, "valorTotal": 8449.34, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PR", "objeto": "Ar Condicionado", "quantidade": 1, "valorUnitario": 2195.72, "valorTotal": 2195.72, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PR", "objeto": "Gravador de Voz", "quantidade": 4, "valorUnitario": 390.53, "valorTotal": 1562.12, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PR", "objeto": "Televisão", "quantidade": 1, "valorUnitario": 3351.47, "valorTotal": 3351.47, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PR", "objeto": "Fone de Ouvido", "quantidade": 4, "valorUnitario": 70.8, "valorTotal": 283.2, "valorExecutado": 283.2, "instrumento": "Convênio" },
+            { "uf": "PR", "objeto": "Projetor de Vídeo", "quantidade": 1, "valorUnitario": 4682.86, "valorTotal": 4682.86, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PR", "objeto": "Web Cam", "quantidade": 4, "valorUnitario": 266.3, "valorTotal": 1065.2, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PR", "objeto": "Notebook", "quantidade": 4, "valorUnitario": 3557.0, "valorTotal": 14228.0, "valorExecutado": 99596.0, "instrumento": "Convênio" },
+            { "uf": "PR", "objeto": "Veículo tipo SUV", "quantidade": 1, "valorUnitario": 51133.66, "valorTotal": 51133.66, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PR", "objeto": "Veículo tipo SUV", "quantidade": 1, "valorUnitario": 74366.42, "valorTotal": 74366.42, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AM", "objeto": "APARELHO AR-CONDICIONADO, 18.000 BTUs", "quantidade": 1, "valorUnitario": 3463.8, "valorTotal": 3463.8, "valorExecutado": 3299.99, "instrumento": "Convênio" },
+            { "uf": "AM", "objeto": "NOTEBOOK", "quantidade": 6, "valorUnitario": 5540.11, "valorTotal": 33240.66, "valorExecutado": 27900.0, "instrumento": "Convênio" },
+            { "uf": "AM", "objeto": "CADEIRA GIRATÓRIA, modelo: secretária", "quantidade": 4, "valorUnitario": 343.13, "valorTotal": 1372.52, "valorExecutado": 1200.0, "instrumento": "Convênio" },
+            { "uf": "AM", "objeto": "MESA PARA ESCRITÓRIO, formato: retangular", "quantidade": 7, "valorUnitario": 798.8, "valorTotal": 5591.6, "valorExecutado": 4060.0, "instrumento": "Convênio" },
+            { "uf": "AM", "objeto": "MESA PARA ESCRITÓRIO, tipo 'L'", "quantidade": 8, "valorUnitario": 1076.9, "valorTotal": 8615.2, "valorExecutado": 5280.0, "instrumento": "Convênio" },
+            { "uf": "AM", "objeto": "CADEIRA FIXA, Sem braço, 04 pés, tipo es", "quantidade": 10, "valorUnitario": 522.42, "valorTotal": 5224.2, "valorExecutado": 4000.0, "instrumento": "Convênio" },
+            { "uf": "AC", "objeto": "Aplicação de Palestras com diferentes te", "quantidade": 1, "valorUnitario": 11400.0, "valorTotal": 11400.0, "valorExecutado": 11400.0, "instrumento": "Convênio" },
+            { "uf": "AC", "objeto": "Cadeira de escritório para mesa de reunião", "quantidade": 6, "valorUnitario": 699.99, "valorTotal": 4199.94, "valorExecutado": 4199.94, "instrumento": "Convênio" },
+            { "uf": "AC", "objeto": "Coletes de Identificação", "quantidade": 15, "valorUnitario": 251.25, "valorTotal": 3768.75, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AC", "objeto": "Computador Desktop completo", "quantidade": 1, "valorUnitario": 6552.67, "valorTotal": 6552.67, "valorExecutado": 6040.9, "instrumento": "Convênio" },
+            { "uf": "AC", "objeto": "Câmera de videoconferencia (webcam)", "quantidade": 2, "valorUnitario": 547.5, "valorTotal": 1095.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AC", "objeto": "Filmadora Profissional", "quantidade": 1, "valorUnitario": 2250.0, "valorTotal": 2250.0, "valorExecutado": 2250.0, "instrumento": "Convênio" },
+            { "uf": "AC", "objeto": "Gravador e reprodutor de áudio", "quantidade": 1, "valorUnitario": 489.65, "valorTotal": 489.65, "valorExecutado": 489.65, "instrumento": "Convênio" },
+            { "uf": "AC", "objeto": "Mesa de Reunião Retangular 2m de comprimento", "quantidade": 1, "valorUnitario": 2699.95, "valorTotal": 2699.95, "valorExecutado": 2338.89, "instrumento": "Convênio" },
+            { "uf": "AC", "objeto": "Microfone direcional de mesa", "quantidade": 2, "valorUnitario": 349.75, "valorTotal": 699.5, "valorExecutado": 699.5, "instrumento": "Convênio" },
+            { "uf": "AC", "objeto": "Microfone sem fio tipo lapela", "quantidade": 4, "valorUnitario": 736.33, "valorTotal": 2945.32, "valorExecutado": 2945.32, "instrumento": "Convênio" },
+            { "uf": "AC", "objeto": "Monitor de led 18,5 ' resolução 192", "quantidade": 12, "valorUnitario": 700.0, "valorTotal": 8400.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AC", "objeto": "Notebook 4 núcleos 2.4ghz ram ddr 4 8gb", "quantidade": 1, "valorUnitario": 3599.99, "valorTotal": 3599.99, "valorExecutado": 3114.93, "instrumento": "Convênio" },
+            { "uf": "AC", "objeto": "Smartphone minimo de 128gb de memória in", "quantidade": 1, "valorUnitario": 2341.24, "valorTotal": 2341.24, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Caixa organizadora mínimo 20 L", "quantidade": 20, "valorUnitario": 73.15, "valorTotal": 1463.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Calça Tática", "quantidade": 20, "valorUnitario": 330.53, "valorTotal": 6610.6, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Cinto Tático", "quantidade": 20, "valorUnitario": 209.13, "valorTotal": 4182.6, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Coturno", "quantidade": 20, "valorUnitario": 356.2, "valorTotal": 7124.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "PASTA L", "quantidade": 100, "valorUnitario": 7.99, "valorTotal": 799.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Persiana Rolo - Tecido Blackout - Altura", "quantidade": 3, "valorUnitario": 1630.69, "valorTotal": 4892.07, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "caixa organizadora mínimo 40 L", "quantidade": 20, "valorUnitario": 88.84, "valorTotal": 1776.8, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "extrator de grampo", "quantidade": 5, "valorUnitario": 3.97, "valorTotal": 19.85, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "furadores de papel", "quantidade": 6, "valorUnitario": 19.95, "valorTotal": 119.7, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "grampeadores 240 fl", "quantidade": 5, "valorUnitario": 264.97, "valorTotal": 1324.85, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "pasta arquivo", "quantidade": 101, "valorUnitario": 3.07, "valorTotal": 310.07, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "pen drive 128gb", "quantidade": 6, "valorUnitario": 124.86, "valorTotal": 749.16, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Camisa Tática", "quantidade": 40, "valorUnitario": 198.38, "valorTotal": 7935.2, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Descanso para pés ergonômico", "quantidade": 5, "valorUnitario": 163.77, "valorTotal": 818.85, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Meia Militar", "quantidade": 80, "valorUnitario": 37.15, "valorTotal": 2972.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Ar condicionado inverter 12.000 BTUs", "quantidade": 4, "valorUnitario": 2595.3, "valorTotal": 10381.2, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Ar condicionado inverter 24.000 BTUs", "quantidade": 2, "valorUnitario": 4344.89, "valorTotal": 8689.78, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Cadeira Fixa", "quantidade": 4, "valorUnitario": 655.09, "valorTotal": 2620.36, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Cadeira Giratória com braços", "quantidade": 5, "valorUnitario": 2510.22, "valorTotal": 12551.1, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Computador completo com monitor", "quantidade": 5, "valorUnitario": 3818.0, "valorTotal": 19090.0, "valorExecutado": 80178.0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Estante em aço com 6 prateleiras", "quantidade": 3, "valorUnitario": 360.18, "valorTotal": 1080.54, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Freegobar mínimo 45 litros", "quantidade": 2, "valorUnitario": 1848.36, "valorTotal": 3696.72, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Geladeira minimo 410L Frost Free 110v Branca", "quantidade": 1, "valorUnitario": 3890.0, "valorTotal": 3890.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Longarina com 3 lugares", "quantidade": 2, "valorUnitario": 1239.6, "valorTotal": 2479.2, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Lousa branca, tamanho minimo 1,80x1,20 c", "quantidade": 2, "valorUnitario": 533.8, "valorTotal": 1067.6, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Mesa em L", "quantidade": 5, "valorUnitario": 1527.06, "valorTotal": 7635.3, "valorExecutado": 7635.3, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Microondas mínimo 20L. branco 110v", "quantidade": 1, "valorUnitario": 1490.86, "valorTotal": 1490.86, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Notebook", "quantidade": 2, "valorUnitario": 3557.0, "valorTotal": 7114.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Gravador de telefone de voz de áudio digital", "quantidade": 5, "valorUnitario": 337.51, "valorTotal": 1687.55, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "Headset com identificador de chamada", "quantidade": 5, "valorUnitario": 271.83, "valorTotal": 1359.15, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MS", "objeto": "porteiro eletrônico com fechadura eletrônica", "quantidade": 1, "valorUnitario": 1664.54, "valorTotal": 1664.54, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "SP", "objeto": "Amplificador e Repetidor de WiFi, para O", "quantidade": 1, "valorUnitario": 135.95, "valorTotal": 135.95, "valorExecutado": 135.95, "instrumento": "Convênio" },
+            { "uf": "SP", "objeto": "Aquisição de Etiqueta ink-jet laser A5 9", "quantidade": 10, "valorUnitario": 11.91, "valorTotal": 119.1, "valorExecutado": 119.1, "instrumento": "Convênio" },
+            { "uf": "SP", "objeto": "Mascara de Proteção N95 ajustável branca", "quantidade": 10, "valorUnitario": 59.92, "valorTotal": 599.2, "valorExecutado": 599.2, "instrumento": "Convênio" },
+            { "uf": "SP", "objeto": "Persiana Vertical de Tecido PVC (M2),  p", "quantidade": 1, "valorUnitario": 208.66, "valorTotal": 208.66, "valorExecutado": 208.66, "instrumento": "Convênio" },
+            { "uf": "SP", "objeto": "AR Condicionado Portátil, para a Ouvidoria", "quantidade": 1, "valorUnitario": 3101.18, "valorTotal": 3101.18, "valorExecutado": 3101.18, "instrumento": "Convênio" },
+            { "uf": "SP", "objeto": "Armário de Escritório com 02 portas Ouvi", "quantidade": 5, "valorUnitario": 688.43, "valorTotal": 3442.15, "valorExecutado": 3442.17, "instrumento": "Convênio" },
+            { "uf": "SP", "objeto": "Cadeira Giratória tipo poltrona - para O", "quantidade": 13, "valorUnitario": 829.0, "valorTotal": 10777.0, "valorExecutado": 10777.0, "instrumento": "Convênio" },
+            { "uf": "SP", "objeto": "Cafeteira Expressa 03 modos", "quantidade": 1, "valorUnitario": 834.78, "valorTotal": 834.78, "valorExecutado": 834.78, "instrumento": "Convênio" },
+            { "uf": "SP", "objeto": "Circulador de Ar EBS Turbo  56 cm ECP60", "quantidade": 4, "valorUnitario": 580.07, "valorTotal": 2320.28, "valorExecutado": 2320.28, "instrumento": "Convênio" },
+            { "uf": "SP", "objeto": "Estante de aço para arquivo morto, para", "quantidade": 8, "valorUnitario": 429.42, "valorTotal": 3435.36, "valorExecutado": 3435.36, "instrumento": "Convênio" },
+            { "uf": "SP", "objeto": "Forno Micro-Ondas 01 para Corregedoria", "quantidade": 1, "valorUnitario": 1267.46, "valorTotal": 1267.46, "valorExecutado": 1267.46, "instrumento": "Convênio" },
+            { "uf": "SP", "objeto": "GSMARTPHONE 128GB MEMORIA INTERNA, 8GB R", "quantidade": 1, "valorUnitario": 2716.25, "valorTotal": 2716.25, "valorExecutado": 2716.25, "instrumento": "Convênio" },
+            { "uf": "SP", "objeto": "SMART TV tela plana 50 polegadas, para O", "quantidade": 1, "valorUnitario": 2632.66, "valorTotal": 2632.66, "valorExecutado": 2632.66, "instrumento": "Convênio" },
+            { "uf": "SP", "objeto": "Sofa de recepção 03 lugares, para Ouvidoria", "quantidade": 1, "valorUnitario": 2190.01, "valorTotal": 2190.01, "valorExecutado": 2190.01, "instrumento": "Convênio" },
+            { "uf": "MA", "objeto": "Curso de capacitação em VCQB (MODULO I)", "quantidade": 4, "valorUnitario": 4221.04, "valorTotal": 16884.16, "valorExecutado": 1999.98, "instrumento": "Convênio" },
+            { "uf": "MA", "objeto": "curso Gestão de Risco, Compliance e Audi", "quantidade": 2, "valorUnitario": 9924.3, "valorTotal": 19848.6, "valorExecutado": 9800.0, "instrumento": "Convênio" },
+            { "uf": "MA", "objeto": "curso Negociação e Administração de Conf", "quantidade": 6, "valorUnitario": 980.0, "valorTotal": 5880.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MA", "objeto": "Caixas de som", "quantidade": 8, "valorUnitario": 70.89, "valorTotal": 567.12, "valorExecutado": 567.12, "instrumento": "Convênio" },
+            { "uf": "MA", "objeto": "Camera para pc com microfone com tecnolo", "quantidade": 10, "valorUnitario": 218.0, "valorTotal": 2180.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MA", "objeto": "computador tipo básico", "quantidade": 10, "valorUnitario": 5068.0, "valorTotal": 50680.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "MA", "objeto": "notebook básico", "quantidade": 2, "valorUnitario": 4500.0, "valorTotal": 9000.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PB", "objeto": "CAIXA de som amplificada com potência má", "quantidade": 2, "valorUnitario": 1399.0, "valorTotal": 2798.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PB", "objeto": "NOTEBOOK TIPO III  Processador: AMD Ryze", "quantidade": 2, "valorUnitario": 8498.0, "valorTotal": 16996.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PB", "objeto": "PROJETOR Multimídia 3500 lumens 1024 x 7", "quantidade": 2, "valorUnitario": 2490.01, "valorTotal": 4980.02, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PB", "objeto": "Smart TV Led 55, Televisor 55 Polegadas,", "quantidade": 1, "valorUnitario": 2660.0, "valorTotal": 2660.0, "valorExecutado": 2660.0, "instrumento": "Convênio" },
+            { "uf": "PI", "objeto": "Camiseta", "quantidade": 40, "valorUnitario": 40.26, "valorTotal": 1610.4, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PI", "objeto": "Banner", "quantidade": 18, "valorUnitario": 107.33, "valorTotal": 1931.94, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PI", "objeto": "Cartilha", "quantidade": 2000, "valorUnitario": 2.35, "valorTotal": 4700.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PI", "objeto": "Folder", "quantidade": 2000, "valorUnitario": 0.52, "valorTotal": 1040.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PI", "objeto": "Urnas de Acrílico", "quantidade": 18, "valorUnitario": 189.38, "valorTotal": 3408.84, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PI", "objeto": "Smartphone", "quantidade": 2, "valorUnitario": 3607.33, "valorTotal": 7214.66, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PI", "objeto": "Armário baixo 800 x 500 x 740 mm", "quantidade": 1, "valorUnitario": 977.22, "valorTotal": 977.22, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PI", "objeto": "Cadeira fixa média com braços", "quantidade": 6, "valorUnitario": 895.51, "valorTotal": 5373.06, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PI", "objeto": "Cadeira operacional espaldar alto, com b", "quantidade": 3, "valorUnitario": 1358.33, "valorTotal": 4074.99, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PI", "objeto": "Cadeira operacional espaldar médio, com", "quantidade": 5, "valorUnitario": 1048.72, "valorTotal": 5243.6, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PI", "objeto": "Headset Fone", "quantidade": 3, "valorUnitario": 255.23, "valorTotal": 765.69, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PI", "objeto": "Longarina de 2 lugares com brçaos", "quantidade": 3, "valorUnitario": 1760.37, "valorTotal": 5281.11, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PI", "objeto": "Mesa em L, dimensões: 1400 x 600 x 1400", "quantidade": 1, "valorUnitario": 1603.77, "valorTotal": 1603.77, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "PI", "objeto": "Mesa reunião redonda, dimensões: 1200 x", "quantidade": 1, "valorUnitario": 1225.53, "valorTotal": 1225.53, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RO", "objeto": "Adesivo 60 x 50", "quantidade": 400, "valorUnitario": 43.0, "valorTotal": 17200.0, "valorExecutado": 4000.0, "instrumento": "Convênio" },
+            { "uf": "RO", "objeto": "Banner 0,60 x 0,50", "quantidade": 275, "valorUnitario": 21.17, "valorTotal": 5821.75, "valorExecutado": 4950.0, "instrumento": "Convênio" },
+            { "uf": "RO", "objeto": "Placa PVC 70 x 60", "quantidade": 100, "valorUnitario": 54.33, "valorTotal": 5433.0, "valorExecutado": 4500.0, "instrumento": "Convênio" },
+            { "uf": "RO", "objeto": "Computador de Mesa (desktop) PROCESSADOR", "quantidade": 12, "valorUnitario": 2928.39, "valorTotal": 35140.68, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RO", "objeto": "MONITOR WIDESCREEN 24MK430H - 23.8' LED,", "quantidade": 12, "valorUnitario": 775.08, "valorTotal": 9300.96, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RO", "objeto": "Nobreak 1200Va 120V", "quantidade": 12, "valorUnitario": 827.85, "valorTotal": 9934.2, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RO", "objeto": "Teclado e mouse sem fio multi slim, abnt", "quantidade": 12, "valorUnitario": 78.73, "valorTotal": 944.76, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RO", "objeto": "Webcam Full Hd 4k Microfone Conexão", "quantidade": 12, "valorUnitario": 246.65, "valorTotal": 2959.8, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "TO", "objeto": "ETAPA 1 - OUVIDORIA - Apoio ergonômico p", "quantidade": 3, "valorUnitario": 70.0, "valorTotal": 210.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "TO", "objeto": "ETAPA 1 - OUVIDORIA - Caixa de som para", "quantidade": 3, "valorUnitario": 55.77, "valorTotal": 167.31, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "TO", "objeto": "ETAPA 1 - OUVIDORIA - Headset Microfone", "quantidade": 3, "valorUnitario": 166.33, "valorTotal": 498.99, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "TO", "objeto": "ETAPA 1 - OUVIDORIA - Webcam: Câmera Web", "quantidade": 3, "valorUnitario": 104.0, "valorTotal": 312.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "TO", "objeto": "ETAPA 1 - OUVIDORIA - CPU: Microcomputad", "quantidade": 3, "valorUnitario": 9163.33, "valorTotal": 27489.99, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "TO", "objeto": "ETAPA 1 - OUVIDORIA - Cadeira Giratória", "quantidade": 3, "valorUnitario": 1200.0, "valorTotal": 3600.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "TO", "objeto": "ETAPA 1 - OUVIDORIA - Mesa - estação de", "quantidade": 3, "valorUnitario": 506.15, "valorTotal": 1518.45, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "TO", "objeto": "ETAPA 1 - OUVIDORIA - Monitor", "quantidade": 3, "valorUnitario": 1179.99, "valorTotal": 3539.97, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "TO", "objeto": "ETAPA 1 - OUVIDORIA - Nobreak: Peça/Comp", "quantidade": 3, "valorUnitario": 448.0, "valorTotal": 1344.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "TO", "objeto": "ETAPA 1 - OUVIDORIA - Notebook: Bateria:", "quantidade": 3, "valorUnitario": 7446.0, "valorTotal": 22338.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RJ", "objeto": "MINIBUS PARA ATENDIMENTO DE CIDADÕES IN", "quantidade": 1, "valorUnitario": 323838.9, "valorTotal": 323838.9, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Ar Condicionado Split 9000 BTUs (OUVIDORIA)", "quantidade": 1, "valorUnitario": 1349.62, "valorTotal": 1349.62, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Cadeira Longarina plástica 03 Lugares -", "quantidade": 1, "valorUnitario": 703.26, "valorTotal": 703.26, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Cadeira Secretária Fixa, Preta, pé palit", "quantidade": 4, "valorUnitario": 145.59, "valorTotal": 582.36, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Cafeteira Elétrica Tradicional Industria", "quantidade": 1, "valorUnitario": 844.06, "valorTotal": 844.06, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Computador Desktop (OUVIDORIA)", "quantidade": 1, "valorUnitario": 1455.49, "valorTotal": 1455.49, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Forno de Microondas - 20L  Branco (OUVID", "quantidade": 1, "valorUnitario": 482.36, "valorTotal": 482.36, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Fragmentadora de Papel  150 folhas (OUVI", "quantidade": 1, "valorUnitario": 4438.14, "valorTotal": 4438.14, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Frigobar 71L (OUVIDORIA)", "quantidade": 2, "valorUnitario": 929.63, "valorTotal": 1859.26, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Gravador de áudio digital 32GB (OUVIDORIA)", "quantidade": 4, "valorUnitario": 537.68, "valorTotal": 2150.72, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "HD Externo 2TB (OUVIDORIA)", "quantidade": 4, "valorUnitario": 696.94, "valorTotal": 2787.76, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Impressora multifuncional  Tanque de Tin", "quantidade": 2, "valorUnitario": 1589.1, "valorTotal": 3178.2, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Mesa Escritório REDONDA - 1,20m (OUVIDORIA)", "quantidade": 1, "valorUnitario": 492.51, "valorTotal": 492.51, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Nobreak 1200VA (OUVIDORIA)", "quantidade": 5, "valorUnitario": 1220.91, "valorTotal": 6104.55, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Notebook (OUVIDORIA)", "quantidade": 1, "valorUnitario": 2020.5, "valorTotal": 2020.5, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Pen drive 64Gb (OUVIDORIA)", "quantidade": 8, "valorUnitario": 237.74, "valorTotal": 1901.92, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Projetor Multimídia 3.000 lumens (OUVIDORIA)", "quantidade": 1, "valorUnitario": 7133.77, "valorTotal": 7133.77, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Tela de projeção 2x2 retrátil com tripé", "quantidade": 1, "valorUnitario": 1047.97, "valorTotal": 1047.97, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Webcam full HD (OUVIDORIA)", "quantidade": 2, "valorUnitario": 245.54, "valorTotal": 491.08, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Aparelho para videoconferência", "quantidade": 1, "valorUnitario": 5102.67, "valorTotal": 5102.67, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Ar-Condicionado", "quantidade": 2, "valorUnitario": 2602.52, "valorTotal": 5205.04, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Armário Buffet com 2 Portas", "quantidade": 1, "valorUnitario": 469.58, "valorTotal": 469.58, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Armário para Escritório - Material MDP,", "quantidade": 1, "valorUnitario": 465.13, "valorTotal": 465.13, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Cadeira para Atendimento Visitante - Cad", "quantidade": 10, "valorUnitario": 272.54, "valorTotal": 2725.4, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Cadeira para Escritório - Cadeira Presid", "quantidade": 5, "valorUnitario": 725.66, "valorTotal": 3628.3, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Cafeteira - Cafeteira eletrica, sistema", "quantidade": 1, "valorUnitario": 469.8, "valorTotal": 469.8, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Caixa de som de PC", "quantidade": 4, "valorUnitario": 83.77, "valorTotal": 335.08, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Computador Completo - Processador: Intel", "quantidade": 2, "valorUnitario": 2436.57, "valorTotal": 4873.14, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Conjunto de mesa com 4 cadeiras infantis", "quantidade": 1, "valorUnitario": 270.0, "valorTotal": 270.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Estante", "quantidade": 1, "valorUnitario": 409.18, "valorTotal": 409.18, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Frigobar", "quantidade": 1, "valorUnitario": 1415.72, "valorTotal": 1415.72, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Headset", "quantidade": 3, "valorUnitario": 162.78, "valorTotal": 488.34, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Mesa Redonda para reunião - Mesa com tam", "quantidade": 1, "valorUnitario": 707.85, "valorTotal": 707.85, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Mesas de trabalho - Material: tampo de M", "quantidade": 5, "valorUnitario": 692.67, "valorTotal": 3463.35, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Monitor para PC - Monitor a partir de 19", "quantidade": 5, "valorUnitario": 536.33, "valorTotal": 2681.65, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Mouse sem fio wireless", "quantidade": 5, "valorUnitario": 45.25, "valorTotal": 226.25, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Poltrona para recepção", "quantidade": 1, "valorUnitario": 646.03, "valorTotal": 646.03, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Porta Copo Descartável - Inox de Parede", "quantidade": 1, "valorUnitario": 63.33, "valorTotal": 63.33, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Porta Copo Descartável - Suporte Duplo d", "quantidade": 1, "valorUnitario": 91.33, "valorTotal": 91.33, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Projetor de vídeo", "quantidade": 1, "valorUnitario": 4352.5, "valorTotal": 4352.5, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Quadro Branco", "quantidade": 2, "valorUnitario": 195.7, "valorTotal": 391.4, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Scanner Portátil", "quantidade": 2, "valorUnitario": 1710.0, "valorTotal": 3420.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Sofá para Recepção", "quantidade": 1, "valorUnitario": 1833.3, "valorTotal": 1833.3, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "TV Recepção", "quantidade": 1, "valorUnitario": 1094.18, "valorTotal": 1094.18, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Tablet", "quantidade": 5, "valorUnitario": 3386.75, "valorTotal": 16933.75, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RN", "objeto": "Webcam", "quantidade": 4, "valorUnitario": 166.82, "valorTotal": 667.28, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Banner", "quantidade": 5, "valorUnitario": 38.4, "valorTotal": 192.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Caixas de canal de Manifestação", "quantidade": 8, "valorUnitario": 100.9, "valorTotal": 807.2, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Cartaz", "quantidade": 15, "valorUnitario": 9.04, "valorTotal": 135.6, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Crachá", "quantidade": 20, "valorUnitario": 29.98, "valorTotal": 599.6, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Folders", "quantidade": 800, "valorUnitario": 0.48, "valorTotal": 384.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Pastas", "quantidade": 20, "valorUnitario": 15.62, "valorTotal": 312.4, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Cursos de Capacitação", "quantidade": 2, "valorUnitario": 10035.13, "valorTotal": 20070.26, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Apoio para os Pés", "quantidade": 1, "valorUnitario": 65.08, "valorTotal": 65.08, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Armário", "quantidade": 1, "valorUnitario": 805.09, "valorTotal": 805.09, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Cadeira Executiva Giratória", "quantidade": 3, "valorUnitario": 1274.58, "valorTotal": 3823.74, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Cadeira para atendimento ao Pú", "quantidade": 6, "valorUnitario": 1183.21, "valorTotal": 7099.26, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Câmera Fotográfica Digital", "quantidade": 2, "valorUnitario": 3929.13, "valorTotal": 7858.26, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Data Show", "quantidade": 1, "valorUnitario": 3434.23, "valorTotal": 3434.23, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Gravador de Áudio Portátil Pro", "quantidade": 2, "valorUnitario": 2454.0, "valorTotal": 4908.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Impressora a Laser", "quantidade": 1, "valorUnitario": 7034.15, "valorTotal": 7034.15, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Mesa/Diretora", "quantidade": 2, "valorUnitario": 1156.58, "valorTotal": 2313.16, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Nobreak", "quantidade": 2, "valorUnitario": 3286.01, "valorTotal": 6572.02, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Notebook", "quantidade": 3, "valorUnitario": 4602.0, "valorTotal": 13806.0, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Smartphone", "quantidade": 3, "valorUnitario": 2733.9, "valorTotal": 8201.7, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "RR", "objeto": "Ouvidoria-Tela de proteção para Monitor", "quantidade": 2, "valorUnitario": 789.66, "valorTotal": 1579.32, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "SC", "objeto": "Item 001 - Veículo Completo Automático,", "quantidade": 1, "valorUnitario": 140216.7, "valorTotal": 140216.7, "valorExecutado": 0, "instrumento": "Convênio" },
+            { "uf": "AL", "objeto": "Veículo SUV 2008 PEUGEOT", "quantidade": 1, "valorUnitario": 153000.0, "valorTotal": 153000.0, "valorExecutado": 153000.0, "instrumento": "Doação" },
+            { "uf": "AM", "objeto": "Veículo SUV 2008 PEUGEOT", "quantidade": 1, "valorUnitario": 153000.0, "valorTotal": 153000.0, "valorExecutado": 153000.0, "instrumento": "Doação" },
+            { "uf": "AP", "objeto": "Veículo SUV 2008 PEUGEOT", "quantidade": 1, "valorUnitario": 153000.0, "valorTotal": 153000.0, "valorExecutado": 153000.0, "instrumento": "Doação" },
+            { "uf": "BA", "objeto": "Veículo SUV 2008 PEUGEOT", "quantidade": 1, "valorUnitario": 153000.0, "valorTotal": 153000.0, "valorExecutado": 153000.0, "instrumento": "Doação" },
+            { "uf": "CE", "objeto": "Veículo SUV 2008 PEUGEOT", "quantidade": 1, "valorUnitario": 153000.0, "valorTotal": 153000.0, "valorExecutado": 153000.0, "instrumento": "Doação" },
+            { "uf": "ES", "objeto": "Veículo SUV 2008 PEUGEOT", "quantidade": 1, "valorUnitario": 153000.0, "valorTotal": 153000.0, "valorExecutado": 153000.0, "instrumento": "Doação" },
+            { "uf": "MA", "objeto": "Veículo SUV 2008 PEUGEOT", "quantidade": 1, "valorUnitario": 153000.0, "valorTotal": 153000.0, "valorExecutado": 153000.0, "instrumento": "Doação" },
+            { "uf": "MS", "objeto": "Veículo SUV 2008 PEUGEOT", "quantidade": 1, "valorUnitario": 153000.0, "valorTotal": 153000.0, "valorExecutado": 153000.0, "instrumento": "Doação" },
+            { "uf": "MT", "objeto": "Veículo SUV 2008 PEUGEOT", "quantidade": 1, "valorUnitario": 153000.0, "valorTotal": 153000.0, "valorExecutado": 153000.0, "instrumento": "Doação" },
+            { "uf": "PA", "objeto": "Veículo SUV 2008 PEUGEOT", "quantidade": 1, "valorUnitario": 153000.0, "valorTotal": 153000.0, "valorExecutado": 153000.0, "instrumento": "Doação" },
+            { "uf": "PB", "objeto": "Veículo SUV 2008 PEUGEOT", "quantidade": 1, "valorUnitario": 153000.0, "valorTotal": 153000.0, "valorExecutado": 153000.0, "instrumento": "Doação" },
+            { "uf": "PR", "objeto": "Veículo SUV 2008 PEUGEOT", "quantidade": 1, "valorUnitario": 153000.0, "valorTotal": 153000.0, "valorExecutado": 153000.0, "instrumento": "Doação" },
+            { "uf": "PE", "objeto": "Veículo SUV 2008 PEUGEOT", "quantidade": 1, "valorUnitario": 153000.0, "valorTotal": 153000.0, "valorExecutado": 153000.0, "instrumento": "Doação" },
+            { "uf": "PI", "objeto": "Veículo SUV 2008 PEUGEOT", "quantidade": 1, "valorUnitario": 153000.0, "valorTotal": 153000.0, "valorExecutado": 153000.0, "instrumento": "Doação" },
+            { "uf": "RJ", "objeto": "Veículo SUV 2008 PEUGEOT", "quantidade": 1, "valorUnitario": 153000.0, "valorTotal": 153000.0, "valorExecutado": 153000.0, "instrumento": "Doação" },
+            { "uf": "RN", "objeto": "Veículo SUV 2008 PEUGEOT", "quantidade": 1, "valorUnitario": 153000.0, "valorTotal": 153000.0, "valorExecutado": 153000.0, "instrumento": "Doação" },
+            { "uf": "SP", "objeto": "Veículo SUV 2008 PEUGEOT", "quantidade": 1, "valorUnitario": 153000.0, "valorTotal": 153000.0, "valorExecutado": 153000.0, "instrumento": "Doação" }
         ];
 
         let tabelaInstancia = null;
         let chartInstancia = null;
 
-        // ========================================================================
-        // 2. INICIALIZAÇÃO
-        // ========================================================================
         document.addEventListener('DOMContentLoaded', () => {
             initDashboard(dadosFaf);
+            renderDetailsView(); // Prepara a view de detalhes
         });
 
-        // ========================================================================
-        // 3. LÓGICA DO DASHBOARD
-        // ========================================================================
+        // --- CONTROLE DE VISUALIZAÇÃO (SPA) ---
+        function toggleView(viewName) {
+            if (viewName === 'detalhamento') {
+                document.getElementById('view-dashboard').style.display = 'none';
+                document.getElementById('view-detalhamento').style.display = 'block';
+                window.scrollTo(0,0);
+            } else {
+                document.getElementById('view-dashboard').style.display = 'block';
+                document.getElementById('view-detalhamento').style.display = 'none';
+            }
+        }
 
+        // --- DASHBOARD PRINCIPAL ---
         function initDashboard(data) {
             if (chartInstancia) chartInstancia.destroy();
             if (tabelaInstancia) {
                 tabelaInstancia.destroy();
                 $('#tabelaItens').empty(); 
-                $('#tabelaItens').html('<thead><tr><th>UF</th><th>Objeto</th><th class="text-center">Qtd.</th><th class="text-end">Valor Unit. (R$)</th><th class="text-end">Valor Total (R$)</th><th class="text-end">Executado (R$)</th><th class="text-center">%</th></tr></thead><tbody></tbody>');
+                $('#tabelaItens').html('<thead><tr><th class="text-center">Inst.</th><th>UF</th><th>Objeto</th><th class="text-center">Qtd.</th><th class="text-end">Valor Unit. (R$)</th><th class="text-end">Valor Total (R$)</th><th class="text-end">Executado (R$)</th><th class="text-center">%</th></tr></thead><tbody></tbody>');
             }
 
             const analise = processarDadosAgregados(data);
@@ -480,12 +889,149 @@
             renderKPIs(analise.global, analise.ufsUnicas);
             renderChart(analise.dadosPorUF);
             initTable(data);
-            populateSelectUF(analise.ufsUnicas);
-            setupEventListeners();
             
-            // Inicializa os cards dinâmicos (Resumo da Seleção)
+            populateSelectUF(analise.ufsUnicas);
+            populateSelectInstrumento(data); 
+            
+            setupEventListeners();
             atualizarCardsDinamicos();
         }
+
+        // --- DETALHAMENTO POR ESTADO ---
+        function calculateStateMetrics(uf, data) {
+            // Filtra dados apenas da UF
+            const items = data.filter(d => d.uf === uf);
+            
+            let totalRepassado = 0;
+            let totalExecutado = 0;
+            
+            let fafVal = 0, fafExec = 0;
+            let convVal = 0, convExec = 0;
+            let doacVal = 0;
+
+            items.forEach(item => {
+                const val = item.valorTotal || 0;
+                const exec = item.valorExecutado || 0;
+                const inst = (item.instrumento || "").toUpperCase();
+
+                totalRepassado += val;
+                totalExecutado += exec;
+
+                if (inst.includes("FAF")) {
+                    fafVal += val;
+                    fafExec += exec;
+                } else if (inst.includes("CONV")) {
+                    convVal += val;
+                    convExec += exec;
+                } else if (inst.includes("DOA")) {
+                    doacVal += val;
+                }
+            });
+
+            return {
+                totalRepassado,
+                totalExecutado,
+                execGlobal: totalRepassado > 0 ? (totalExecutado / totalRepassado) * 100 : 0,
+                fafVal,
+                fafExecPct: fafVal > 0 ? (fafExec / fafVal) * 100 : 0,
+                convVal,
+                convExecPct: convVal > 0 ? (convExec / convVal) * 100 : 0,
+                doacVal
+            };
+        }
+
+        function renderDetailsView() {
+            const container = document.getElementById('container-estados');
+            container.innerHTML = ''; // Limpa
+
+            // Ordem das regiões
+            const ordemRegioes = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
+
+            // Mapeamento de classe de cor para a região
+            const corRegiao = {
+                "NORTE": "bg-norte",
+                "NORDESTE": "bg-nordeste",
+                "CENTRO-OESTE": "bg-centro-oeste",
+                "SUDESTE": "bg-sudeste",
+                "SUL": "bg-sul"
+            };
+
+            ordemRegioes.forEach(regiao => {
+                // Título da Região
+                const regionHeader = document.createElement('div');
+                regionHeader.className = 'region-title';
+                regionHeader.textContent = regiao;
+                container.appendChild(regionHeader);
+
+                // Grid para os estados da região
+                const row = document.createElement('div');
+                row.className = 'row g-4'; // g-4 espaçamento
+
+                const estadosDaRegiao = regioes[regiao];
+                const bgClass = corRegiao[regiao] || "";
+                
+                estadosDaRegiao.forEach(uf => {
+                    const metrics = calculateStateMetrics(uf, dadosFaf);
+                    const nomeEstado = nomesEstados[uf] || uf;
+                    
+                    // Lógica para Bandeira
+                    const flagUrl = imagensBandeiras[uf] || "";
+                    
+                    // Fallback visual para imagem quebrada
+                    const imgElement = flagUrl 
+                        ? `<img src="${flagUrl}" alt="Bandeira ${uf}" class="state-flag" onerror="this.onerror=null;this.src='';this.style.display='none';this.nextElementSibling.style.display='inline-block';"> <i class="fas fa-flag text-secondary" style="font-size: 24px; display: none;"></i>`
+                        : `<i class="fas fa-flag text-secondary" style="font-size: 24px;"></i>`;
+
+                    const col = document.createElement('div');
+                    col.className = 'col-lg-6'; // 2 por linha em desktop (lg), 1 em mobile
+
+                    // Adiciona a classe de cor da região ao card
+                    col.innerHTML = `
+                        <div class="state-detail-card ${bgClass}">
+                            <div class="state-header">
+                                ${imgElement}
+                                <h3 class="state-name">${nomeEstado} (${uf})</h3>
+                            </div>
+                            <div class="mini-card-grid">
+                                <div class="mini-card">
+                                    <div class="mini-card-label">Total Repassado</div>
+                                    <div class="mini-card-value text-primary">${formatMoney(metrics.totalRepassado)}</div>
+                                </div>
+                                <div class="mini-card">
+                                    <div class="mini-card-label">Execução Global</div>
+                                    <div class="mini-card-value">${formatPercent(metrics.execGlobal)}</div>
+                                </div>
+                                <div class="mini-card">
+                                    <div class="mini-card-label">Convênios</div>
+                                    <div class="mini-card-value">${formatMoney(metrics.convVal)}</div>
+                                </div>
+                                <div class="mini-card">
+                                    <div class="mini-card-label">% Exec. Convênios</div>
+                                    <div class="mini-card-value">${formatPercent(metrics.convExecPct)}</div>
+                                </div>
+                                <div class="mini-card">
+                                    <div class="mini-card-label">Fundo a Fundo 2021</div>
+                                    <div class="mini-card-value">${formatMoney(metrics.fafVal)}</div>
+                                </div>
+                                <div class="mini-card">
+                                    <div class="mini-card-label">% Exec. FAF</div>
+                                    <div class="mini-card-value">${formatPercent(metrics.fafExecPct)}</div>
+                                </div>
+                                <div class="mini-card" style="grid-column: span 2;">
+                                    <div class="mini-card-label">Valor Doado</div>
+                                    <div class="mini-card-value text-warning">${formatMoney(metrics.doacVal)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    row.appendChild(col);
+                });
+
+                container.appendChild(row);
+            });
+        }
+
+        // --- FUNÇÕES UTILITÁRIAS (COMPARTILHADAS) ---
 
         function processarDadosAgregados(data) {
             let totalContratado = 0;
@@ -527,7 +1073,6 @@
             };
         }
 
-        // --- Renderizadores ---
         const formatMoney = (val) => val ? val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'R$ 0,00';
         const formatPercent = (val) => val ? val.toFixed(1).replace('.', ',') + '%' : '0,0%';
         
@@ -540,15 +1085,21 @@
             return Array.from({ length: count }, (_, i) => cores[i % cores.length]);
         }
 
+        function getInstrumentoBadge(inst) {
+            // Retorna HTML do badge com base no instrumento
+            if (!inst) return '<span class="badge badge-inst-default">N/A</span>';
+            
+            const normalized = inst.toUpperCase();
+            if (normalized.includes("FAF")) return `<span class="badge badge-inst-faf" title="${inst}">FAF</span>`;
+            if (normalized.includes("CONVÊNIO") || normalized.includes("CONVENIO")) return `<span class="badge badge-inst-convenio" title="${inst}">CVN</span>`;
+            if (normalized.includes("DOAÇ") || normalized.includes("DOAC")) return `<span class="badge badge-inst-doacao" title="${inst}">DOA</span>`;
+            
+            return `<span class="badge badge-inst-default">${inst.substring(0,3)}</span>`;
+        }
+
         function renderKPIs(global, ufsList) {
-            const elContratado = $('#kpi-total-contratado');
-            const txtContratado = formatMoney(global.totalContratado);
-            elContratado.text(txtContratado).attr('title', txtContratado);
-
-            const elExecutado = $('#kpi-total-executado');
-            const txtExecutado = formatMoney(global.totalExecutado);
-            elExecutado.text(txtExecutado).attr('title', txtExecutado);
-
+            $('#kpi-total-contratado').text(formatMoney(global.totalContratado)).attr('title', formatMoney(global.totalContratado));
+            $('#kpi-total-executado').text(formatMoney(global.totalExecutado)).attr('title', formatMoney(global.totalExecutado));
             $('#kpi-percentual-global').text(formatPercent(global.percentual));
             $('#kpi-ufs-ativas').text(global.ufsComExecucao);
             $('#kpi-ufs-total-desc').text(`de ${ufsList.length} UFs listadas`);
@@ -618,7 +1169,9 @@
                 };
 
                 const tr = document.createElement('tr');
+                // Use a hidden span with full text for search purposes
                 tr.innerHTML = `
+                    <td class="text-center"><span class="d-none">${row.instrumento}</span>${getInstrumentoBadge(row.instrumento)}</td>
                     <td><span class="badge bg-secondary badge-uf">${row.uf}</span></td>
                     <td title="${row.objeto}"><span class="truncate-text">${row.objeto}</span></td>
                     <td class="text-center">${row.quantidade}</td>
@@ -646,11 +1199,11 @@
                 scrollY: '500px', 
                 scrollCollapse: true,
                 info: false, 
-                order: [[0, 'asc'], [5, 'desc']],
+                order: [[1, 'asc'], [7, 'desc']], // Ordernar por UF depois %
                 columnDefs: [
-                    { type: 'num-fmt', targets: [3, 4, 5] },
-                    { width: '5%', targets: 0 },
-                    { width: '35%', targets: 1 }
+                    { width: '5%', targets: 0 }, // Instrumento
+                    { width: '5%', targets: 1 }, // UF
+                    { width: '30%', targets: 2 } // Objeto
                 ]
             });
         }
@@ -661,19 +1214,29 @@
             ufs.forEach(uf => $select.append(new Option(uf, uf)));
         }
 
+        function populateSelectInstrumento(data) {
+            const instSet = new Set();
+            data.forEach(item => { if(item.instrumento) instSet.add(item.instrumento); });
+            const instrumentos = Array.from(instSet).sort();
+
+            const $select = $('#filtroInstrumento');
+            $select.empty().append(new Option("Todos Instrumentos", ""));
+            instrumentos.forEach(inst => $select.append(new Option(inst, inst)));
+        }
+
         function setupEventListeners() {
-            $('#filtroUF').off('change').on('change', function() { 
-                aplicarFiltroUF(this.value); 
-                atualizarCardsDinamicos(); 
+            // Listeners para os 3 filtros
+            $('#filtroUF, #filtroInstrumento').off('change').on('change', function() { 
+                aplicarFiltrosCombinados();
             });
 
             $('#filtroObjeto').off('keyup').on('keyup', function() { 
-                tabelaInstancia.column(1).search(this.value).draw(); 
-                atualizarCardsDinamicos(); 
+                aplicarFiltrosCombinados();
             });
             
             const reset = () => {
                 $('#filtroUF').val('');
+                $('#filtroInstrumento').val('');
                 $('#filtroObjeto').val('');
                 $('#filtroAtivoBadge').hide();
                 tabelaInstancia.search('').columns().search('').draw();
@@ -683,14 +1246,55 @@
             $('#btnLimparFiltros, #filtroAtivoBadge').off('click').on('click', reset);
         }
 
+        // Nova lógica centralizada de filtros
+        function aplicarFiltrosCombinados() {
+            const uf = $('#filtroUF').val();
+            const inst = $('#filtroInstrumento').val();
+            const texto = $('#filtroObjeto').val();
+
+            // 1. Filtra a Tabela (DataTables)
+            // Coluna 0 = Instrumento, Coluna 1 = UF, Coluna 2 = Objeto (Busca Global)
+            
+            // Filtro UF (Exato)
+            tabelaInstancia.column(1).search(uf ? `^${uf}$` : '', true, false);
+            
+            // Filtro Instrumento (Exato ou parcial dependendo da string)
+            tabelaInstancia.column(0).search(inst ? inst : '');
+            
+            // Filtro Texto (Objeto)
+            tabelaInstancia.search(texto);
+            
+            tabelaInstancia.draw();
+
+            // 2. Atualiza Badge Visual
+            if (uf || inst) {
+                const label = [uf, inst].filter(Boolean).join(" + ");
+                $('#textoFiltroAtivo').text(label);
+                $('#filtroAtivoBadge').css('display', 'inline-block');
+            } else {
+                $('#filtroAtivoBadge').hide();
+            }
+
+            // 3. Atualiza Cards
+            atualizarCardsDinamicos();
+        }
+
+        // Função de atalho para o clique no gráfico
+        function aplicarFiltroUF(uf) {
+            $('#filtroUF').val(uf);
+            aplicarFiltrosCombinados();
+        }
+
         function atualizarCardsDinamicos() {
             const ufFiltro = $('#filtroUF').val();
+            const instFiltro = $('#filtroInstrumento').val();
             const textoFiltro = $('#filtroObjeto').val().toLowerCase();
 
             const dadosFiltrados = dadosFaf.filter(item => {
                 const matchUF = ufFiltro ? item.uf === ufFiltro : true;
+                const matchInst = instFiltro ? item.instrumento === instFiltro : true;
                 const matchTexto = textoFiltro ? (item.objeto && item.objeto.toLowerCase().includes(textoFiltro)) : true;
-                return matchUF && matchTexto;
+                return matchUF && matchInst && matchTexto;
             });
 
             let somaRepassado = 0;
@@ -714,18 +1318,6 @@
 
             $('#dyn-percentual').text(formatPercent(percentual));
             $('#dyn-qtd-itens').text(qtdItens);
-        }
-
-        function aplicarFiltroUF(uf) {
-            $('#filtroUF').val(uf);
-            if (uf) {
-                tabelaInstancia.column(0).search(`^${uf}$`, true, false).draw();
-                $('#textoFiltroAtivo').text(uf);
-                $('#filtroAtivoBadge').css('display', 'inline-block');
-            } else {
-                tabelaInstancia.column(0).search('').draw();
-                $('#filtroAtivoBadge').hide();
-            }
         }
 
     </script>
